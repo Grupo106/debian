@@ -22,3 +22,9 @@
   - name: Instalar screen
     apt: name=screen
     become: yes
+  - name: Instalar bridge-utils
+    apt: name=bridge-utils
+    become: yes
+  - name: Crear interfaz br0
+    command: /sbin/brctl addbr br0
+    become: yes

@@ -3,3 +3,4 @@ debian1
 
 [debian:vars]
 ansible_user=morfeo
+ansible_become_method=su
