@@ -1,6 +1,2 @@
-[debian]
-debian1
-
-[debian:vars]
-ansible_user=morfeo
-ansible_become_method=su
+[boxes]
+debian1 ansible_user=morfeo ansible_become=true ansible_become_method=su
