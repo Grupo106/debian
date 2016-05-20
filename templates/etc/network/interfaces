@@ -1,8 +1,6 @@
 # This file describes the network interfaces available on your system
 # and how to activate them. For more information, see interfaces(5).
 
-source /etc/network/interfaces.d/*
-
 # The loopback network interface
 auto lo br0
 iface lo inet loopback
@@ -10,5 +8,8 @@ iface lo inet loopback
 # bridge setup
 iface eth0 inet manual
 iface eth1 inet manual
-iface br0 inet dhcp
+iface br0 inet static
+    address {{ ansible_default_ipv4.address }}
+    netmask {{ ansible_default_ipv4.netmask }}
+    gateway {{ ansible_default_ipv4.gateway }}
     bridge_ports eth0 eth1

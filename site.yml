@@ -1,30 +1,49 @@
-- hosts: debian
+- hosts: default
+  become: yes
+  vars:
+    - postgresql_version: 9.4
+
+  # Tasks
+  # -----------------------------------------------------------------------
   tasks:
 #  - name: Dehabilitar login root
 #    template:
 #      src: templates/etc/ttys
 #      dest: /etc/ttys
-#    become: yes
 #  - name: Habilitar claves ssh
 #    template:
 #      src: templates/ssh/authorized_keys
 #      dest: /home/morfeo/.ssh/authorized_keys
-#    become: yes
 #  - name: Generar password aleatoria para usuario {{ ansible_user_id }}
 #    raw: cat /dev/urandom | tr -dc a-zA-Z0-9 | head -c 50 |
 #         pw mod user {{ ansible_user_id }} -h 0
-#    become: yes
+#  - name: Instalar screen
+#    apt: name=screen
+  - name: Instalar bridge-utils
+    apt: name=bridge-utils
+    notify: crear interfaz br0
+
   - name: Habilitar interfaz bridge
     template:
       src: templates/etc/network/interfaces
-      dest: /etc/network/interfaces
-    become: yes
-  - name: Instalar screen
-    apt: name=screen
-    become: yes
-  - name: Instalar bridge-utils
-    apt: name=bridge-utils
-    become: yes
-  - name: Crear interfaz br0
+      dest: /etc/network/interfaces.d/setup
+    notify: reiniciar servicio de red
+
+  - name: Instalar PostgreSQL {{ postgresql_version }}
+    apt: name=postgresql-{{ postgresql_version }}
+    notify: crear cluster
+
+  - name: Habilitar servicio postgresql
+    service: name=postgresql enabled=yes state=started
+
+  # Handlers
+  # -----------------------------------------------------------------------
+  handlers:
+  - name: crear cluster
+    command: pg_createcluster {{ postgresql_version }} main --start
+
+  - name: reiniciar servicio de red
+    service: name=networking state=restarted
+
+  - name: crear interfaz br0
     command: /sbin/brctl addbr br0
-    become: yes
