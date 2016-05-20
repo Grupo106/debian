@@ -23,18 +23,18 @@
     apt: name=bridge-utils
     notify: crear interfaz br0
 
-  - name: Habilitar interfaz bridge
+  - name: Configurar interfaces de red
     template:
       src: templates/etc/network/interfaces
       dest: /etc/network/interfaces.d/setup
     notify: reiniciar servicio de red
 
-  - name: Instalar PostgreSQL {{ postgresql_version }}
-    apt: name=postgresql-{{ postgresql_version }}
-    notify: crear cluster
-
-  - name: Habilitar servicio postgresql
-    service: name=postgresql enabled=yes state=started
+#  - name: Instalar PostgreSQL {{ postgresql_version }}
+#    apt: name=postgresql-{{ postgresql_version }}
+#    notify: crear cluster
+#
+#  - name: Habilitar servicio postgresql
+#    service: name=postgresql enabled=yes state=started
 
   # Handlers
   # -----------------------------------------------------------------------
@@ -44,6 +44,3 @@
 
   - name: reiniciar servicio de red
     service: name=networking state=restarted
-
-  - name: crear interfaz br0
-    command: /sbin/brctl addbr br0
