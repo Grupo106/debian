@@ -2,14 +2,15 @@
 # and how to activate them. For more information, see interfaces(5).
 
 # The loopback network interface
-auto lo br0
+auto lo
 iface lo inet loopback
 
 # bridge setup
+auto br0
 iface eth0 inet manual
 iface eth1 inet manual
 iface br0 inet static
-    address {{ ansible_default_ipv4.address }}
-    netmask {{ ansible_default_ipv4.netmask }}
-    gateway {{ ansible_default_ipv4.gateway }}
     bridge_ports eth0 eth1
+        address {{ ansible_default_ipv4.address }}
+        netmask {{ ansible_default_ipv4.netmask }}
+        gateway {{ ansible_default_ipv4.gateway }}

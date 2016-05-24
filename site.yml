@@ -1,4 +1,4 @@
-- hosts: default
+- hosts: all
   become: yes
   vars:
     - postgresql_version: 9.4
@@ -6,19 +6,8 @@
   # Tasks
   # -----------------------------------------------------------------------
   tasks:
-#  - name: Dehabilitar login root
-#    template:
-#      src: templates/etc/ttys
-#      dest: /etc/ttys
-#  - name: Habilitar claves ssh
-#    template:
-#      src: templates/ssh/authorized_keys
-#      dest: /home/morfeo/.ssh/authorized_keys
-#  - name: Generar password aleatoria para usuario {{ ansible_user_id }}
-#    raw: cat /dev/urandom | tr -dc a-zA-Z0-9 | head -c 50 |
-#         pw mod user {{ ansible_user_id }} -h 0
-#  - name: Instalar screen
-#    apt: name=screen
+  #- name: Instalar screen
+  #  apt: name=screen
   - name: Instalar bridge-utils
     apt: name=bridge-utils
     notify: crear interfaz br0
@@ -26,8 +15,9 @@
   - name: Configurar interfaces de red
     template:
       src: templates/etc/network/interfaces
-      dest: /etc/network/interfaces.d/setup
-    notify: reiniciar servicio de red
+      dest: /etc/network/interfaces
+    notify:
+      - reboot
 
 #  - name: Instalar PostgreSQL {{ postgresql_version }}
 #    apt: name=postgresql-{{ postgresql_version }}
@@ -42,5 +32,8 @@
   - name: crear cluster
     command: pg_createcluster {{ postgresql_version }} main --start
 
-  - name: reiniciar servicio de red
-    service: name=networking state=restarted
+  - name: reboot
+    command: shutdown -r now "Ansible updates triggered"
+    async: 0
+    poll: 0
+    ignore_errors: true
