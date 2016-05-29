@@ -73,7 +73,7 @@ Vagrant.configure(2) do |config|
     inline: "sudo apt-get install -y python"
 
   config.vm.provision "ansible" do |ansible|
-    ansible.verbose = "v"
+    # ansible.verbose = "v"
     ansible.playbook = "site.yml"
   end
 end

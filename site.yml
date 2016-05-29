@@ -1,17 +1,26 @@
 - hosts: all
   become: yes
   vars:
-    - postgresql_version: 9.4
+    - postgresql_version: 9.4 # version de postgres a utilizar
+    - src_path: /usr/local/src # directorio donde se guardara el codigo fuente
 
   # Tasks
-  # -----------------------------------------------------------------------
+  # =========================================================================
+  
+  # utilidades
+  # -------------------------------------------------------------------------
   tasks:
-  #- name: Instalar screen
-  #  apt: name=screen
-  - name: Instalar bridge-utils
-    apt: name=bridge-utils
-    notify: crear interfaz br0
-
+  - name: Instalar screen
+    apt: name={{ item }}
+    with_items:
+      - screen
+      - bridge-utils
+      - git
+      - make
+      - gcc
+  
+  # configuracion de red
+  # -------------------------------------------------------------------------
   - name: Configurar interfaces de red
     template:
       src: templates/etc/network/interfaces
@@ -19,15 +28,37 @@
     notify:
       - reboot
 
-#  - name: Instalar PostgreSQL {{ postgresql_version }}
-#    apt: name=postgresql-{{ postgresql_version }}
-#    notify: crear cluster
-#
-#  - name: Habilitar servicio postgresql
-#    service: name=postgresql enabled=yes state=started
+  # postgresql
+  # -------------------------------------------------------------------------
+  - name: Instalar PostgreSQL {{ postgresql_version }}
+    apt: name=postgresql-{{ postgresql_version }}
+    notify: crear cluster
+
+  - name: Habilitar servicio postgresql
+    service: name=postgresql enabled=yes state=started
+
+  - name: Instalar git
+    apt: name=git
+
+  # adquisidor
+  # -------------------------------------------------------------------------
+  - name: Instalar dependencias adquisidor
+    apt: name={{ item }}
+    with_items:
+      - libecpg-dev
+      - libpcap0.8-dev
+  
+  - name: Descargar ultima version del adquisidor
+    git: repo=https://github.com/Grupo106/adquisidor.git
+         dest={{ src_path }}/adquisidor
+         version=master
+    notify:
+      - Compilar adquisidor
+      - Instalar adquisidor
+
 
   # Handlers
-  # -----------------------------------------------------------------------
+  # =========================================================================
   handlers:
   - name: crear cluster
     command: pg_createcluster {{ postgresql_version }} main --start
@@ -37,3 +68,12 @@
     async: 0
     poll: 0
     ignore_errors: true
+
+  - name: Compilar adquisidor
+    command: make {{ item }} chdir={{ src_path }}/adquisidor
+    with_items:
+      - clean
+      - all
+
+  - name: Instalar adquisidor
+    command: make install chdir={{ src_path }}/adquisidor
