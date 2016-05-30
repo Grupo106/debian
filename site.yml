@@ -2,6 +2,8 @@
   become: yes
   vars:
     - postgresql_version: 9.4 # version de postgres a utilizar
+    - postgresql_user: morfeo
+    - postgresql_passwd: grupo106@unlam
     - src_path: /usr/local/src # directorio donde se guardara el codigo fuente
 
   # Tasks
@@ -18,24 +20,26 @@
       - git
       - make
       - gcc
+      - locales
   
-  # configuracion de red
-  # -------------------------------------------------------------------------
-  - name: Configurar interfaces de red
-    template:
-      src: templates/etc/network/interfaces
-      dest: /etc/network/interfaces
-    notify:
-      - reboot
-
   # postgresql
   # -------------------------------------------------------------------------
+  - name: Crear locales
+    locale_gen: name=es_AR.UTF-8 state=present
+
   - name: Instalar PostgreSQL {{ postgresql_version }}
     apt: name=postgresql-{{ postgresql_version }}
     notify: crear cluster
 
   - name: Habilitar servicio postgresql
     service: name=postgresql enabled=yes state=started
+
+  - name: Copiar schema
+    template: src=templates/schema.sql.j2 dest=/tmp/schema.sql
+
+  - name: Crear schema
+    command: psql -f /tmp/schema.sql
+    become_user: postgres
 
   - name: Instalar git
     apt: name=git
@@ -56,6 +60,14 @@
       - Compilar adquisidor
       - Instalar adquisidor
 
+  # configuracion de red
+  # -------------------------------------------------------------------------
+  - name: Configurar interfaces de red
+    template:
+      src: templates/etc/network/interfaces
+      dest: /etc/network/interfaces
+    notify:
+      - reboot
 
   # Handlers
   # =========================================================================
