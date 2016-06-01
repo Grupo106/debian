@@ -28,6 +28,7 @@
       - screen
       - vim
   
+
   # postgresql
   # -------------------------------------------------------------------------
   - name: Crear locales
@@ -86,8 +87,10 @@
       - release
       - install
     environment:
-      postgresql_user: "{{ postgresql_user }}"
-      postgresql_password: "{{ postgresql_password }}"
+      POSTGRESQL_DB: "{{ postgresql_db }}"
+      POSTGRESQL_USER: "{{ postgresql_user }}"
+      POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
+
 
   # configuracion de red
   # -------------------------------------------------------------------------
@@ -109,4 +112,3 @@
     async: 0
     poll: 0
     ignore_errors: true
-
