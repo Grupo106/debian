@@ -12,7 +12,7 @@
   # utilidades
   # -------------------------------------------------------------------------
   tasks:
-  - name: Instalar screen
+  - name: Instalar dependencias
     apt: name={{ item }}
     with_items:
       - screen
@@ -25,7 +25,7 @@
   # postgresql
   # -------------------------------------------------------------------------
   - name: Crear locales
-    locale_gen: name=es_AR.UTF-8 state=present
+    locale_gen: name=en_US.UTF-8 state=present
 
   - name: Instalar PostgreSQL {{ postgresql_version }}
     apt: name=postgresql-{{ postgresql_version }}
@@ -37,12 +37,9 @@
   - name: Copiar schema
     template: src=templates/schema.sql.j2 dest=/tmp/schema.sql
 
-  - name: Crear schema
-    command: psql -f /tmp/schema.sql
-    become_user: postgres
-
-  - name: Instalar git
-    apt: name=git
+ #  - name: Crear schema
+ #    command: psql -f /tmp/schema.sql
+ #    become_user: postgres
 
   # adquisidor
   # -------------------------------------------------------------------------
@@ -56,9 +53,13 @@
     git: repo=https://github.com/Grupo106/adquisidor.git
          dest={{ src_path }}/adquisidor
          version=master
-    notify:
-      - Compilar adquisidor
-      - Instalar adquisidor
+
+  - name: Compilar e instalar adquisidor
+    command: make {{ item }} chdir={{ src_path }}/adquisidor
+    with_items:
+      - clean
+      - release
+      - install
 
   # configuracion de red
   # -------------------------------------------------------------------------
@@ -81,11 +82,3 @@
     poll: 0
     ignore_errors: true
 
-  - name: Compilar adquisidor
-    command: make {{ item }} chdir={{ src_path }}/adquisidor
-    with_items:
-      - clean
-      - all
-
-  - name: Instalar adquisidor
-    command: make install chdir={{ src_path }}/adquisidor
