@@ -2,8 +2,9 @@
   become: yes
   vars:
     - postgresql_version: 9.4 # version de postgres a utilizar
+    - postgresql_db: morfeo
     - postgresql_user: morfeo
-    - postgresql_passwd: grupo106@unlam
+    - postgresql_password: morfeo
     - src_path: /usr/local/src # directorio donde se guardara el codigo fuente
 
   # Tasks
@@ -15,12 +16,17 @@
   - name: Instalar dependencias
     apt: name={{ item }}
     with_items:
-      - screen
       - bridge-utils
       - git
       - make
       - gcc
       - locales
+
+  - name: Instalar paquetes opcionales
+    apt: name={{ item }}
+    with_items:
+      - screen
+      - vim
   
   # postgresql
   # -------------------------------------------------------------------------
@@ -28,18 +34,37 @@
     locale_gen: name=en_US.UTF-8 state=present
 
   - name: Instalar PostgreSQL {{ postgresql_version }}
-    apt: name=postgresql-{{ postgresql_version }}
+    apt: name={{ item }}
     notify: crear cluster
+    with_items:
+      - python-psycopg2
+      - postgresql-{{ postgresql_version }}
 
   - name: Habilitar servicio postgresql
     service: name=postgresql enabled=yes state=started
 
-  - name: Copiar schema
-    template: src=templates/schema.sql.j2 dest=/tmp/schema.sql
+  - name: Configurar permisos
+    template: src=templates/pg_hba.conf
+              dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
 
- #  - name: Crear schema
- #    command: psql -f /tmp/schema.sql
- #    become_user: postgres
+ # - copy: src=templates/schema.sql dest=/tmp/schema.sql
+
+ # - name: Crear schema
+ #   command: psql -f /tmp/schema.sql
+ #   become_user: "{{ postgresql_user }}"
+
+ # - file: name=/tmp/schema.sql state=absent
+
+  - name: Crear base de datos
+    postgresql_db: name=morfeo
+    become_user: postgres
+  
+  - name: Crear usuario Postgresql
+    postgresql_user: name={{ postgresql_user }}
+                     password={{ postgresql_password }}
+                     db={{ postgresql_db }} 
+    become_user: postgres
+
 
   # adquisidor
   # -------------------------------------------------------------------------
@@ -60,6 +85,9 @@
       - clean
       - release
       - install
+    environment:
+      postgresql_user: "{{ postgresql_user }}"
+      postgresql_password: "{{ postgresql_password }}"
 
   # configuracion de red
   # -------------------------------------------------------------------------
