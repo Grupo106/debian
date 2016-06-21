@@ -1,13 +1,13 @@
-CREATE TABLE traffic (
+CREATE TABLE paquetes (
     id serial PRIMARY KEY,
-    time timestamp NOT NULL DEFAULT now(),
-    src inet NOT NULL,
-    sport integer NOT NULL,
-    dst inet NOT NULL,
-    dport integer NOT NULL,
+    hora_captura timestamp NOT NULL DEFAULT now(),
+    ip_origen integer NOT NULL,
+    puerto_origen integer NOT NULL,
+    ip_destino integer NOT NULL,
+    puerto_destino integer NOT NULL,
     bytes integer NOT NULL,
-    direction boolean NULL,
-    protocol smallint NOT NULL
+    direccion boolean NULL,
+    protocolo smallint NOT NULL
 );
 
-CREATE INDEX time_idx ON traffic (time);
+CREATE INDEX hora_idx ON paquetes(hora_captura);
