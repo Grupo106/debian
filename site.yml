@@ -2,10 +2,14 @@
   become: yes
   vars:
     - postgresql_version: 9.4 # version de postgres a utilizar
-    - postgresql_db: morfeo
-    - postgresql_user: morfeo
-    - postgresql_password: morfeo
-    - src_path: /usr/local/src # directorio donde se guardara el codigo fuente
+    - postgresql_db: netcop
+    - postgresql_user: netcop
+    - postgresql_password: netcop
+    - src_path: /root/netcop # directorio donde se guardara el codigo fuente
+    - bin_path: /usr/local/bin # directorio donde estaran los binarios
+    - etc_path: /etc/netcop # directorio donde estaran los archivos de conf
+    - if_outside: eth0
+    - if_inside: eth1
 
   # Tasks
   # =========================================================================
@@ -28,6 +32,8 @@
       - screen
       - vim
   
+  - name: Crear carpeta de configuracion netcop
+    file: name={{ etc_path }} state=directory
 
   # postgresql
   # -------------------------------------------------------------------------
@@ -41,31 +47,32 @@
       - python-psycopg2
       - postgresql-{{ postgresql_version }}
 
-  - name: Habilitar servicio postgresql
-    service: name=postgresql enabled=yes state=started
-
   - name: Configurar permisos
     template: src=templates/pg_hba.conf
               dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
 
- # - copy: src=templates/schema.sql dest=/tmp/schema.sql
+  - name: Habilitar servicio postgresql
+    service: name=postgresql enabled=yes state=started
 
- # - name: Crear schema
- #   command: psql -f /tmp/schema.sql
- #   become_user: "{{ postgresql_user }}"
-
- # - file: name=/tmp/schema.sql state=absent
-
-  - name: Crear base de datos
-    postgresql_db: name=morfeo
-    become_user: postgres
-  
-  - name: Crear usuario Postgresql
+  - name: Crear usuario de postgres {{ postgresql_user }}
     postgresql_user: name={{ postgresql_user }}
                      password={{ postgresql_password }}
-                     db={{ postgresql_db }} 
     become_user: postgres
 
+  - name: Crear base de datos
+    postgresql_db: name={{ postgresql_db }} 
+                   login_user={{ postgresql_user }}
+                   login_password={{ postgresql_password }}
+
+  - name: Copiar esquema de la base de datos de Netcop
+    copy: src=templates/schema.sql dest=/tmp/schema.sql
+
+#  - name: Crear tablas
+#    command: psql -f /tmp/schema.sql
+#    become_user: postgres
+
+#  - name: Borrar archivo temporal esquema
+#    file: name=/tmp/schema.sql state=absent
 
   # adquisidor
   # -------------------------------------------------------------------------
@@ -73,7 +80,7 @@
     apt: name={{ item }}
     with_items:
       - libecpg-dev
-      - libpcap0.8-dev
+      - libpcap-dev
   
   - name: Descargar ultima version del adquisidor
     git: repo=https://github.com/Grupo106/adquisidor.git
@@ -91,6 +98,50 @@
       POSTGRESQL_USER: "{{ postgresql_user }}"
       POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
 
+  - name: Configurar adquisidor
+    template: src=templates/adquisidor.conf.j2 
+              dest={{ etc_path }}/adquisidor.conf
+
+  - name: Instalar servicio adquisidor inside
+    template: src=templates/adquisidor.service.j2 
+              dest=/etc/systemd/system/adquisidor-{{ interface }}.service
+    vars: 
+      interface: inside
+
+  - name: Instalar servicio adquisidor outside
+    template: src=templates/adquisidor.service.j2 
+              dest=/etc/systemd/system/adquisidor-{{ interface }}.service
+    vars: 
+      interface: outside
+
+  - name: Iniciar servicio adquisidor
+    service: name=adquisidor-{{ item }} enabled=yes state=started
+    with_items:
+      - inside
+      - outside
+
+  # analizador
+  # -------------------------------------------------------------------------
+  - name: Instalar dependencias analizador
+    apt: name={{ item }}
+    with_items:
+      - libecpg-dev
+  
+  - name: Descargar ultima version del analizador
+    git: repo=https://github.com/Grupo106/analizador.git
+         dest={{ src_path }}/analizador
+         version=master
+
+  - name: Compilar e instalar analizador
+    command: make {{ item }} chdir={{ src_path }}/analizador
+    with_items:
+      - clean
+      - release
+      - install
+    environment:
+      POSTGRESQL_DB: "{{ postgresql_db }}"
+      POSTGRESQL_USER: "{{ postgresql_user }}"
+      POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
 
   # configuracion de red
   # -------------------------------------------------------------------------

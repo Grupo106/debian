@@ -1,4 +1,4 @@
-CREATE TABLE paquetes (
+CREATE TABLE IF NOT EXISTS paquetes (
     id serial PRIMARY KEY,
     hora_captura timestamp NOT NULL DEFAULT now(),
     ip_origen integer NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE paquetes (
     ip_destino integer NOT NULL,
     puerto_destino integer NOT NULL,
     bytes integer NOT NULL,
-    direccion boolean NULL,
+    direccion smallint NULL,
     protocolo smallint NOT NULL
 );
 

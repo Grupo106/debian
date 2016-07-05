@@ -70,7 +70,7 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell",
-    inline: "sudo apt-get install -y python"
+    inline: "sudo apt-get -qq update && sudo apt-get install -y python"
 
   config.vm.provision "ansible" do |ansible|
     # ansible.verbose = "v"

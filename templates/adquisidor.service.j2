@@ -1,0 +1,11 @@
+[Unit]
+Description=Netcop adquisidor. Interfaz {{ interface }}
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+EnvironmentFile={{ etc_path }}/adquisidor.conf
+ExecStart={{ bin_path }}/adquisidor ${{ interface|upper }} outbound
+
+[Install]
+WantedBy=multi-user.target
