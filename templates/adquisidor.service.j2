@@ -1,11 +1,8 @@
+{{ ansible_managed | comment }}
 [Unit]
-Description=Netcop adquisidor. Interfaz {{ interface }}
+Description=Capturador de paquetes. Netcop
 After=network.target postgresql.service
 
 [Service]
 Type=simple
-EnvironmentFile={{ etc_path }}/adquisidor.conf
-ExecStart={{ bin_path }}/adquisidor ${{ interface|upper }} outbound
-
-[Install]
-WantedBy=multi-user.target
+ExecStart={{ bin_path }}/adquisidor --config {{ etc_path }}/netcop.config

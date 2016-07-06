@@ -35,6 +35,10 @@
   - name: Crear carpeta de configuracion netcop
     file: name={{ etc_path }} state=directory
 
+  - name: Copiar archivo configuracion netcop
+    template: src=templates/netcop.config.j2 
+              dest={{ etc_path }}/netcop.config
+
   # postgresql
   # -------------------------------------------------------------------------
   - name: Crear locales
@@ -48,7 +52,7 @@
       - postgresql-{{ postgresql_version }}
 
   - name: Configurar permisos
-    template: src=templates/pg_hba.conf
+    template: src=templates/pg_hba.conf.j2
               dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
 
   - name: Habilitar servicio postgresql
@@ -67,12 +71,12 @@
   - name: Copiar esquema de la base de datos de Netcop
     copy: src=templates/schema.sql dest=/tmp/schema.sql
 
-#  - name: Crear tablas
-#    command: psql -f /tmp/schema.sql
-#    become_user: postgres
+  - name: Crear tablas
+    command: psql -f /tmp/schema.sql -d {{ postgresql_db }}
+    become_user: postgres
 
-#  - name: Borrar archivo temporal esquema
-#    file: name=/tmp/schema.sql state=absent
+  - name: Borrar archivo temporal esquema
+    file: name=/tmp/schema.sql state=absent
 
   # adquisidor
   # -------------------------------------------------------------------------
@@ -94,31 +98,16 @@
       - release
       - install
     environment:
-      POSTGRESQL_DB: "{{ postgresql_db }}"
-      POSTGRESQL_USER: "{{ postgresql_user }}"
-      POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
+      - POSTGRESQL_DB: "{{ postgresql_db }}"
+      - POSTGRESQL_USER: "{{ postgresql_user }}"
+      - POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
 
-  - name: Configurar adquisidor
-    template: src=templates/adquisidor.conf.j2 
-              dest={{ etc_path }}/adquisidor.conf
-
-  - name: Instalar servicio adquisidor inside
+  - name: Instalar servicio adquisidor
     template: src=templates/adquisidor.service.j2 
-              dest=/etc/systemd/system/adquisidor-{{ interface }}.service
-    vars: 
-      interface: inside
-
-  - name: Instalar servicio adquisidor outside
-    template: src=templates/adquisidor.service.j2 
-              dest=/etc/systemd/system/adquisidor-{{ interface }}.service
-    vars: 
-      interface: outside
+              dest=/etc/systemd/system/adquisidor.service
 
   - name: Iniciar servicio adquisidor
-    service: name=adquisidor-{{ item }} enabled=yes state=started
-    with_items:
-      - inside
-      - outside
+    service: name=adquisidor enabled=yes state=started
 
   # analizador
   # -------------------------------------------------------------------------
@@ -143,12 +132,11 @@
       POSTGRESQL_USER: "{{ postgresql_user }}"
       POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
 
-  # configuracion de red
+  # configuracion de puente de red
   # -------------------------------------------------------------------------
-  - name: Configurar interfaces de red
-    template:
-      src: templates/etc/network/interfaces
-      dest: /etc/network/interfaces
+  - name: Configurar puente de red
+    template: src=templates/etc/network/interfaces
+              dest=/etc/network/interfaces
     notify:
       - reboot
 
