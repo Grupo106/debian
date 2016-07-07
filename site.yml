@@ -58,15 +58,15 @@
   - name: Habilitar servicio postgresql
     service: name=postgresql enabled=yes state=started
 
+  - name: Crear base de datos
+    postgresql_db: name={{ postgresql_db }} 
+                   owner={{ postgresql_user }}
+    become_user: postgres
+
   - name: Crear usuario de postgres {{ postgresql_user }}
     postgresql_user: name={{ postgresql_user }}
                      password={{ postgresql_password }}
     become_user: postgres
-
-  - name: Crear base de datos
-    postgresql_db: name={{ postgresql_db }} 
-                   login_user={{ postgresql_user }}
-                   login_password={{ postgresql_password }}
 
   - name: Copiar esquema de la base de datos de Netcop
     copy: src=templates/schema.sql dest=/tmp/schema.sql
