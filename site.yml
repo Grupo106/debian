@@ -53,6 +53,9 @@
     with_items:
       - python-psycopg2
       - postgresql-{{ postgresql_version }}
+
+  - name: Crear cluster
+    shell: pg_createcluster {{ postgresql_version }} main --start || /bin/true
     environment:
       - LC_ALL: en_US.UTF-8
 
@@ -63,14 +66,14 @@
   - name: Habilitar servicio postgresql
     service: name=postgresql enabled=yes state=started
 
-  - name: Crear base de datos
-    postgresql_db: name={{ postgresql_db }} 
-                   owner={{ postgresql_user }}
-    become_user: postgres
-
   - name: Crear usuario de postgres {{ postgresql_user }}
     postgresql_user: name={{ postgresql_user }}
                      password={{ postgresql_password }}
+    become_user: postgres
+
+  - name: Crear base de datos
+    postgresql_db: name={{ postgresql_db }} 
+                   owner={{ postgresql_user }}
     become_user: postgres
     
   - name: Establecer privilegios del usuario {{ postgresql_user }}
@@ -160,8 +163,6 @@
   # Handlers
   # =========================================================================
   handlers:
-  - name: crear cluster
-    command: pg_createcluster {{ postgresql_version }} main --start
 
   - name: reboot
     command: shutdown -r now "Ansible updates triggered"
