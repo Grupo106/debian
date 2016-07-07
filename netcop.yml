@@ -168,14 +168,17 @@
   - name: Copiar configuracion de nginx
     copy: src=templates/nginx.netcop.j2
           dest=/etc/nginx/sites-available/netcop
+    notify: reiniciar nginx
 
   - name: Deshabilitar sitio por default
     file: path=/etc/nginx/sites-enabled/default state=absent
+    notify: reiniciar nginx
 
   - name: Habilitar sitio netcop
     file: dest=/etc/nginx/sites-enabled/netcop 
           src=/etc/nginx/sites-available/netcop
           state=link
+    notify: reiniciar nginx
 
   - name: Iniciar nginx
     service: name=nginx enabled=yes state=started
@@ -197,3 +200,6 @@
     async: 0
     poll: 0
     ignore_errors: true
+
+  - name: reiniciar nginx
+    service: name=nginx state=restarted
