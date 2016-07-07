@@ -42,6 +42,10 @@
     template: src=templates/netcop.config.j2 
               dest={{ etc_path }}/netcop.config
 
+  - name: Configurar banner
+    template: src=templates/motd.j2
+              dest=/etc/motd
+
   # postgresql
   # -------------------------------------------------------------------------
   - name: Crear locales
@@ -151,6 +155,30 @@
       POSTGRESQL_DB: "{{ postgresql_db }}"
       POSTGRESQL_USER: "{{ postgresql_user }}"
       POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
+
+  # UI
+  # -------------------------------------------------------------------------
+  - name: Instalar dependencias de UI
+    apt: name={{ item }}
+    with_items:
+      - nginx-light
+      - php5
+      - php5-fpm
+
+  - name: Copiar configuracion de nginx
+    copy: src=template/nginx.netcop.j2
+          dest=/etc/nginx/sites-available/netcop
+
+  - name: Deshabilitar sitio por default
+    file: path=/etc/nginx/sites-enabled/default state=absent
+
+  - name: Habilitar sitio netcop
+    file: dest=/etc/nginx/sites-enabled/netcop 
+          src=/etc/nginx/sites-available/netcop
+		  state=link
+
+  - name: Iniciar nginx
+    service: name=nginx enabled=yes state=started
 
   # configuracion de puente de red
   # -------------------------------------------------------------------------
