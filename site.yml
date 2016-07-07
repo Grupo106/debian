@@ -5,7 +5,7 @@
     - postgresql_db: netcop
     - postgresql_user: netcop
     - postgresql_password: netcop
-    - src_path: /root/netcop # directorio donde se guardara el codigo fuente
+    - src_path: /code # directorio donde se guardara el codigo fuente
     - bin_path: /usr/local/bin # directorio donde estaran los binarios
     - etc_path: /etc/netcop # directorio donde estaran los archivos de conf
     - if_outside: eth0
@@ -32,8 +32,11 @@
       - screen
       - vim
   
-  - name: Crear carpeta de configuracion netcop
+  - name: Crear carpetas de netcop
     file: name={{ etc_path }} state=directory
+    with_items:
+      - "{{ src_path }}"
+      - "{{ etc_path }}"
 
   - name: Copiar archivo configuracion netcop
     template: src=templates/netcop.config.j2 
@@ -50,6 +53,8 @@
     with_items:
       - python-psycopg2
       - postgresql-{{ postgresql_version }}
+    environment:
+      - LC_ALL: en_US.UTF-8
 
   - name: Configurar permisos
     template: src=templates/pg_hba.conf.j2
@@ -58,14 +63,14 @@
   - name: Habilitar servicio postgresql
     service: name=postgresql enabled=yes state=started
 
-  - name: Crear base de datos
-    postgresql_db: name={{ postgresql_db }} 
-                   owner={{ postgresql_user }}
-    become_user: postgres
-
   - name: Crear usuario de postgres {{ postgresql_user }}
     postgresql_user: name={{ postgresql_user }}
                      password={{ postgresql_password }}
+    become_user: postgres
+
+  - name: Crear base de datos
+    postgresql_db: name={{ postgresql_db }} 
+                   owner={{ postgresql_user }}
     become_user: postgres
 
   - name: Copiar esquema de la base de datos de Netcop
@@ -74,9 +79,6 @@
   - name: Crear tablas
     command: psql -f /tmp/schema.sql -d {{ postgresql_db }}
     become_user: postgres
-
-  - name: Borrar archivo temporal esquema
-    file: name=/tmp/schema.sql state=absent
 
   # adquisidor
   # -------------------------------------------------------------------------
