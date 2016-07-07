@@ -175,7 +175,7 @@
   - name: Habilitar sitio netcop
     file: dest=/etc/nginx/sites-enabled/netcop 
           src=/etc/nginx/sites-available/netcop
-		  state=link
+          state=link
 
   - name: Iniciar nginx
     service: name=nginx enabled=yes state=started
