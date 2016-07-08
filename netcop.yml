@@ -173,8 +173,8 @@
       - php5-fpm
 
   - name: Copiar configuracion de nginx
-    copy: src=templates/nginx.netcop.j2
-          dest=/etc/nginx/sites-available/netcop
+    template: src=templates/nginx.netcop.j2
+              dest=/etc/nginx/sites-available/netcop
     notify: reiniciar nginx
 
   - name: Deshabilitar sitio por default
