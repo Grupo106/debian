@@ -1,6 +1,6 @@
 server {
 	listen 80 default_server;
-	root /var/www/html;
+	root {{ www_path }}
 	index.php index index.html index.htm;
 	server_name netcop;
 	location / {

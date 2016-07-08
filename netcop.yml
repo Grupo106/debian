@@ -8,8 +8,10 @@
     - src_path: /code # directorio donde se guardara el codigo fuente
     - bin_path: /usr/local/bin # directorio donde estaran los binarios
     - etc_path: /etc/netcop # directorio donde estaran los archivos de conf
+    - www_path: /var/www/html # directorio donde estaran los archivos PHP
     - if_outside: eth0
     - if_inside: eth1
+    - codeigniter_version: 3.0.6
 
   # Tasks
   # =========================================================================
@@ -25,6 +27,7 @@
       - make
       - gcc
       - locales
+      - unzip
 
   - name: Instalar paquetes opcionales
     apt: name={{ item }}
@@ -114,6 +117,7 @@
     git: repo=https://github.com/Grupo106/adquisidor.git
          dest={{ src_path }}/adquisidor
          version=master
+    register: compile
 
   - name: Compilar e instalar adquisidor
     command: make {{ item }} chdir={{ src_path }}/adquisidor
@@ -125,6 +129,7 @@
       - POSTGRESQL_DB: "{{ postgresql_db }}"
       - POSTGRESQL_USER: "{{ postgresql_user }}"
       - POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
+    when: compile
 
   - name: Instalar servicio adquisidor
     template: src=templates/adquisidor.service.j2 
@@ -144,6 +149,7 @@
     git: repo=https://github.com/Grupo106/analizador.git
          dest={{ src_path }}/analizador
          version=master
+    register: compile
 
   - name: Compilar e instalar analizador
     command: make {{ item }} chdir={{ src_path }}/analizador
@@ -155,6 +161,7 @@
       POSTGRESQL_DB: "{{ postgresql_db }}"
       POSTGRESQL_USER: "{{ postgresql_user }}"
       POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
+    when: compile
 
   # UI
   # -------------------------------------------------------------------------
@@ -179,6 +186,15 @@
           src=/etc/nginx/sites-available/netcop
           state=link
     notify: reiniciar nginx
+  
+  - name: Descargar Code Igniter {{ codeigniter_version }}
+    get_url: url=https://codeload.github.com/bcit-ci/CodeIgniter/zip/{{ codeigniter_version }}
+             dest=/tmp/codeigniter.zip
+
+  - name: Descomprimir code igniter
+    unarchive: src=/tmp/codeigniter.zip
+               dest={{ www_path }}
+               copy=no
 
   - name: Iniciar nginx
     service: name=nginx enabled=yes state=started
