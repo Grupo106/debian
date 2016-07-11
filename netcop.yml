@@ -15,7 +15,7 @@
 
   # Tasks
   # =========================================================================
-  
+
   # utilidades
   # -------------------------------------------------------------------------
   tasks:
@@ -34,7 +34,7 @@
     with_items:
       - screen
       - vim
-  
+
   - name: Crear carpetas de netcop
     file: name={{ etc_path }} state=directory
     with_items:
@@ -42,7 +42,7 @@
       - "{{ etc_path }}"
 
   - name: Copiar archivo configuracion netcop
-    template: src=templates/netcop.config.j2 
+    template: src=templates/netcop.config.j2
               dest={{ etc_path }}/netcop.config
 
   - name: Configurar banner
@@ -79,10 +79,10 @@
     become_user: postgres
 
   - name: Crear base de datos
-    postgresql_db: name={{ postgresql_db }} 
+    postgresql_db: name={{ postgresql_db }}
                    owner={{ postgresql_user }}
     become_user: postgres
-    
+
   - name: Establecer privilegios del usuario {{ postgresql_user }}
     postgresql_privs: db={{ postgresql_db }}
                       roles={{ postgresql_user }}
@@ -112,7 +112,7 @@
     with_items:
       - libecpg-dev
       - libpcap-dev
-  
+
   - name: Descargar ultima version del adquisidor
     git: repo=https://github.com/Grupo106/adquisidor.git
          dest={{ src_path }}/adquisidor
@@ -132,7 +132,7 @@
     when: compile
 
   - name: Instalar servicio adquisidor
-    template: src=templates/adquisidor.service.j2 
+    template: src=templates/adquisidor.service.j2
               dest=/etc/systemd/system/adquisidor.service
 
   - name: Iniciar servicio adquisidor
@@ -144,7 +144,7 @@
     apt: name={{ item }}
     with_items:
       - libecpg-dev
-  
+
   - name: Descargar ultima version del analizador
     git: repo=https://github.com/Grupo106/analizador.git
          dest={{ src_path }}/analizador
@@ -182,19 +182,23 @@
     notify: reiniciar nginx
 
   - name: Habilitar sitio netcop
-    file: dest=/etc/nginx/sites-enabled/netcop 
+    file: dest=/etc/nginx/sites-enabled/netcop
           src=/etc/nginx/sites-available/netcop
           state=link
     notify: reiniciar nginx
-  
+
   - name: Descargar Code Igniter {{ codeigniter_version }}
     get_url: url=https://codeload.github.com/bcit-ci/CodeIgniter/zip/{{ codeigniter_version }}
              dest=/tmp/codeigniter.zip
 
   - name: Descomprimir code igniter
     unarchive: src=/tmp/codeigniter.zip
-               dest={{ www_path }}
+               dest=/tmp
                copy=no
+
+  - name: Mover CodeIgniter hacia {{ www_path }}
+    file: src=/tmp/CodeIgniter-{{ codeigniter_version }}
+          dest={{ www_path }}
 
   - name: Iniciar nginx
     service: name=nginx enabled=yes state=started
