@@ -194,8 +194,12 @@
 
   - name: Descomprimir code igniter
     unarchive: src=/tmp/codeigniter.zip
-               dest={{ www_path }}
+               dest=/tmp
                copy=no
+
+  - name: Mover CodeIgniter hacia {{ www_path }}
+    file: src=/tmp/CodeIgniter-{{ codeigniter_version }}
+          dest={{ www_path }}
 
   - name: Iniciar nginx
     service: name=nginx enabled=yes state=started
