@@ -4,5 +4,8 @@
 # TYPE  DATABASE             USER                   ADDRESS           METHOD
 local   all                  postgres                                 peer
 local   {{ postgresql_db }}  {{ postgresql_user }}                    md5
+host    {{ postgresql_db }}  {{ postgresql_user }}  0.0.0.0/0         md5
+{% if not production %}
 host    all                  all                    127.0.0.1/32      reject
+{% endif %}
 host    all                  all                    ::1/128           reject

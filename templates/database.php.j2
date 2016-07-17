@@ -13,7 +13,11 @@ $db['default'] = array(
 	'dbdriver' => 'postgre',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
+  {% if production %}
+	'db_debug' => FALSE,
+  {% else %}
+	'db_debug' => TRUE,
+  {% endif %}
 	'cache_on' => FALSE,
 	'cachedir' => '',
 	'char_set' => 'utf8',

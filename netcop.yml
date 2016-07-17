@@ -12,6 +12,7 @@
     - if_outside: eth0
     - if_inside: eth1
     - codeigniter_version: 3.0.6
+    - production: no
 
   # Tasks
   # =========================================================================
