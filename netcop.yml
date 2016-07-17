@@ -67,6 +67,13 @@
     environment:
       - LC_ALL: en_US.UTF-8
 
+  - name: Habilitar postgres para clientes externos
+    lineinfile: 
+        dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+        line: listen_addresses = '*'
+    when: not production
+    notify: reiniciar postgresql
+
   - name: Configurar permisos
     template: src=templates/pg_hba.conf.j2
               dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
@@ -223,5 +230,5 @@
   - name: reiniciar nginx
     service: name=nginx state=restarted
 
-  - name: reiniciar postgres
+  - name: reiniciar postgresql
     service: name=postgresql state=restarted
