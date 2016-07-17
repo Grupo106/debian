@@ -70,6 +70,7 @@
   - name: Configurar permisos
     template: src=templates/pg_hba.conf.j2
               dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+    notify: reiniciar postgres
 
   - name: Habilitar servicio postgresql
     service: name=postgresql enabled=yes state=started
@@ -221,3 +222,6 @@
 
   - name: reiniciar nginx
     service: name=nginx state=restarted
+
+  - name: reiniciar postgres
+    service: name=postgres state=restarted
