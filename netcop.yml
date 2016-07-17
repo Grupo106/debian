@@ -224,4 +224,4 @@
     service: name=nginx state=restarted
 
   - name: reiniciar postgres
-    service: name=postgres state=restarted
+    service: name=postgresql state=restarted
