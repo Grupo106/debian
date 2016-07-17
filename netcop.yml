@@ -5,7 +5,7 @@
     - postgresql_db: netcop
     - postgresql_user: netcop
     - postgresql_password: netcop
-    - src_path: /code # directorio donde se guardara el codigo fuente
+    - src_path: /home/netcop/src # donde se guardara el codigo fuente
     - bin_path: /usr/local/bin # directorio donde estaran los binarios
     - etc_path: /etc/netcop # directorio donde estaran los archivos de conf
     - www_path: /var/www/netcop # directorio donde estaran los archivos PHP
@@ -27,7 +27,6 @@
       - make
       - gcc
       - locales
-      - unzip
 
   - name: Instalar paquetes opcionales
     apt: name={{ item }}
@@ -204,7 +203,7 @@
   # configuracion de puente de red
   # -------------------------------------------------------------------------
   - name: Configurar puente de red
-    template: src=templates/etc/network/interfaces
+    template: src=templates/interfaces.j2
               dest=/etc/network/interfaces
     notify:
       - reboot
