@@ -192,6 +192,11 @@
     git: repo=https://github.com/Grupo106/UI.git
          dest={{ www_path }}
          version=master
+         force=yes
+
+  - name: Configurar conexion con base de datos
+    template: src=templates/database.php.j2
+              dest={{ www_path }}/application/config/database.php
 
   - name: Iniciar nginx
     service: name=nginx enabled=yes state=started
