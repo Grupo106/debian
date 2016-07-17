@@ -8,7 +8,7 @@
     - src_path: /code # directorio donde se guardara el codigo fuente
     - bin_path: /usr/local/bin # directorio donde estaran los binarios
     - etc_path: /etc/netcop # directorio donde estaran los archivos de conf
-    - www_path: /var/www/html # directorio donde estaran los archivos PHP
+    - www_path: /var/www/netcop # directorio donde estaran los archivos PHP
     - if_outside: eth0
     - if_inside: eth1
     - codeigniter_version: 3.0.6
@@ -173,29 +173,25 @@
       - php5
       - php5-fpm
 
-  - name: Copiar configuracion de nginx
+  - name: nginx - Copiar configuracion de nginx
     template: src=templates/nginx.netcop.j2
               dest=/etc/nginx/sites-available/netcop
     notify: reiniciar nginx
 
-  - name: Deshabilitar sitio por default
+  - name: nginx - Deshabilitar sitio por default
     file: path=/etc/nginx/sites-enabled/default state=absent
     notify: reiniciar nginx
 
-  - name: Habilitar sitio netcop
+  - name: nginx - Habilitar sitio netcop
     file: dest=/etc/nginx/sites-enabled/netcop
           src=/etc/nginx/sites-available/netcop
           state=link
     notify: reiniciar nginx
 
-  - name: Descargar Code Igniter {{ codeigniter_version }}
-    get_url: url=https://codeload.github.com/bcit-ci/CodeIgniter/zip/{{ codeigniter_version }}
-             dest=/tmp/codeigniter.zip
-
-  - name: Descomprimir code igniter
-    unarchive: src=/tmp/codeigniter.zip
-               dest={{ www_path }}
-               copy=no
+  - name: Descargar ultima version del modulo UI
+    git: repo=https://github.com/Grupo106/UI.git
+         dest={{ www_path }}
+         version=master
 
   - name: Iniciar nginx
     service: name=nginx enabled=yes state=started

@@ -1,7 +1,7 @@
 server {
 	listen 80 default_server;
 	root {{ www_path }};
-	index index.php index.html index.htm;
+	index index.php;
 	server_name netcop;
 	location / {
 		try_files $uri $uri/ =404;
