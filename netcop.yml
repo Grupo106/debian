@@ -92,6 +92,13 @@
                    owner={{ postgresql_user }}
     become_user: postgres
 
+  - name: Copiar esquema de la base de datos de Netcop
+    copy: src=templates/schema.sql dest=/tmp/schema.sql
+
+  - name: Crear tablas
+    command: psql -f /tmp/schema.sql -d {{ postgresql_db }}
+    become_user: postgres
+
   - name: Establecer privilegios del usuario {{ postgresql_user }}
     postgresql_privs: db={{ postgresql_db }}
                       roles={{ postgresql_user }}
@@ -105,13 +112,6 @@
                       privs=UPDATE,SELECT
                       objs=ALL_IN_SCHEMA
                       type=sequence
-    become_user: postgres
-
-  - name: Copiar esquema de la base de datos de Netcop
-    copy: src=templates/schema.sql dest=/tmp/schema.sql
-
-  - name: Crear tablas
-    command: psql -f /tmp/schema.sql -d {{ postgresql_db }}
     become_user: postgres
 
   # adquisidor
