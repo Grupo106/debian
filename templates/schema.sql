@@ -76,8 +76,8 @@ CREATE TABLE IF NOT EXISTS puerto (
 --  paquete sea de origen X y destino Y se utiliza el grupo 'a' y el 'b' para
 --  X y Y respectivamente
 CREATE TABLE IF NOT EXISTS clase_cidr (
-    id_clase smallint not null REFERENCES clase_trafico ON DELETE CASCADE,
-    id_cidr smallint not null REFERENCES cidr ON DELETE CASCADE,
+    id_clase integer not null REFERENCES clase_trafico ON DELETE CASCADE,
+    id_cidr integer not null REFERENCES cidr ON DELETE CASCADE,
     grupo char not null default 'a',
     PRIMARY KEY (id_clase, id_cidr)
 );
@@ -92,8 +92,8 @@ CREATE TABLE IF NOT EXISTS clase_cidr (
 --  paquete sea de puerto origen X y puerto destino Y se utiliza el grupo 'a'
 --  y el 'b' para X y Y respectivamente
 CREATE TABLE IF NOT EXISTS clase_puerto (
-    id_clase smallint not null REFERENCES clase_trafico ON DELETE CASCADE,
-    id_puerto smallint not null REFERENCES puerto ON DELETE CASCADE,
+    id_clase integer not null REFERENCES clase_trafico ON DELETE CASCADE,
+    id_puerto integer not null REFERENCES puerto ON DELETE CASCADE,
     grupo char not null default 'a',
     PRIMARY KEY (id_clase, id_puerto)
 );
