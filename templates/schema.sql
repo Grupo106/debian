@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS cidr (
 --  protocolos
 CREATE TABLE IF NOT EXISTS puerto (
     id_puerto serial PRIMARY KEY,
-    numero smallint not null,
+    numero integer not null,
     protocolo smallint not null default 0
 );
 
