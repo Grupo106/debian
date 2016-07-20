@@ -29,6 +29,9 @@
       - gcc
       - locales
 
+  - name: Debe existir usuario netcop
+    user: name=netcop
+
   - name: Instalar paquetes opcionales
     apt: name={{ item }}
     with_items:
@@ -68,7 +71,7 @@
       - LC_ALL: en_US.UTF-8
 
   - name: Habilitar postgres para clientes externos
-    lineinfile: 
+    lineinfile:
         dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
         line: listen_addresses = '*'
     when: not production
@@ -201,6 +204,9 @@
          dest={{ www_path }}
          version=master
          force=yes
+
+  - name: Cambiar permisos archivos
+    file: path={{ www_path }} recurse=yes owner=netcop group=www-data
 
   - name: Configurar conexion con base de datos
     template: src=templates/database.php.j2
