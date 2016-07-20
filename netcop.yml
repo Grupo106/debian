@@ -129,6 +129,7 @@
     git: repo=https://github.com/Grupo106/adquisidor.git
          dest={{ src_path }}/adquisidor
          version=master
+         depth=1
     register: compile
 
   - name: Compilar e instalar adquisidor
@@ -161,6 +162,7 @@
     git: repo=https://github.com/Grupo106/analizador.git
          dest={{ src_path }}/analizador
          version=master
+         depth=1
     register: compile
 
   - name: Compilar e instalar analizador
@@ -203,6 +205,7 @@
     git: repo=https://github.com/Grupo106/UI.git
          dest={{ www_path }}
          version=master
+         depth=1
          force=yes
 
   - name: Cambiar permisos archivos
