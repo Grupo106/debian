@@ -21,7 +21,7 @@
   # -------------------------------------------------------------------------
   tasks:
   - name: Instalar dependencias
-    apt: name={{ item }}
+    apt: name={{ item }} update_cache=yes
     with_items:
       - bridge-utils
       - git
