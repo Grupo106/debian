@@ -185,6 +185,7 @@
       - nginx-light
       - php5
       - php5-fpm
+      - php5-pgsql
 
   - name: nginx - Copiar configuracion de nginx
     template: src=templates/nginx.netcop.j2
