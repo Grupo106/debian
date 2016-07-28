@@ -33,6 +33,12 @@
       - gcc
       - locales
 
+  - name: Desinstalar pip
+    apt: name=python-pip state=absent
+
+  - name: Instalar pip
+    easy_install: name=pip
+
   - name: Debe existir usuario netcop
     user: name=netcop
 
@@ -240,6 +246,9 @@
 
   - name: Instalar actualizador
     command: python setup.py install chdir={{ src_path }}/actualizador
+
+  - name: Configurar cron
+    cron: user=netcop special_time=hourly job=actualizador
      
 
   # configuracion de puente de red
