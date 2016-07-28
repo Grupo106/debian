@@ -40,6 +40,9 @@ CREATE TABLE IF NOT EXISTS clase_trafico (
     tipo smallint not null default 0
 );
 
+ALTER TABLE IF EXISTS clase_trafico 
+ADD COLUMN activa boolean DEFAULT TRUE NOT NULL;
+
 -- tabla cidr
 -- ---------------------------------------------------------------
 --  Almacena las redes que componen las clases de trafico.
