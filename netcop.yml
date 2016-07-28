@@ -219,6 +219,21 @@
   - name: Iniciar nginx
     service: name=nginx enabled=yes state=started
 
+  # actualizador
+  # -------------------------------------------------------------------------
+  - name: Descargar ultima version del actualizador
+    git: repo=https://github.com/Grupo106/actualizador.git
+         dest={{ src_path }}/actualizador
+         version=master
+         depth=1
+
+  - name: Instalar dependencias actualizador
+    pip: requirements=requirements.txt chdir={{ src_path }}/actualizador
+
+  - name: Instalar analizador
+    command: python setup.py install chdir={{ src_path }}/actualizador
+     
+
   # configuracion de puente de red
   # -------------------------------------------------------------------------
   - name: Configurar puente de red
