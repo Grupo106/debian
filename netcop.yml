@@ -13,6 +13,10 @@
     - if_inside: eth1
     - codeigniter_version: 3.0.6
     - production: no
+    # url donde el actualizador consultara la ultima version
+    - netcop_url_version: http://netcop.ftp.sh/version
+    # url donde el actualizador descargara la ultima version
+    - netcop_url_descarga: http://netcop.ftp.sh/descarga
 
   # Tasks
   # =========================================================================
@@ -230,7 +234,11 @@
   - name: Instalar dependencias actualizador
     pip: requirements=requirements.txt chdir={{ src_path }}/actualizador
 
-  - name: Instalar analizador
+  - name: Configurar actualizador
+    template: src=templates/actualizador.py.j2
+              dest={{ src_path }}/netcop/config.py
+
+  - name: Instalar actualizador
     command: python setup.py install chdir={{ src_path }}/actualizador
      
 

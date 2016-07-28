@@ -1,0 +1,17 @@
+# {{ ansible_managed }}
+# -*- coding: utf-8 -*-
+
+# Ruta del archivo que contiene la ultima version descargada
+LOCAL_VERSION = '{{ etc_path }}/actualizador'
+
+# URL donde se consultara el ultimo número de version disponible
+URL_VERSION = '{{ netcop_url_version }}'
+
+# URL donde se descargará la ultima versión de firmas
+URL_DOWNLOAD = '{{ netcop_url_descarga }}'
+
+# Parametros de conexion de la base de datos
+BD_HOST = ''
+BD_DATABASE = '{{ postgresql_db }}'
+BD_USER = '{{ postgresql_user }}'
+BD_PASSWORD = '{{ postgresql_password }}'
