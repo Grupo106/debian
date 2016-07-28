@@ -236,6 +236,7 @@
          dest={{ src_path }}/actualizador
          version=master
          depth=1
+         force=yes
 
   - name: Instalar dependencias actualizador
     pip: requirements=requirements.txt chdir={{ src_path }}/actualizador
@@ -249,7 +250,7 @@
 
   - name: Configurar cron
     cron: user=netcop special_time=hourly job=/usr/local/bin/actualizador
-     
+
 
   # configuracion de puente de red
   # -------------------------------------------------------------------------
