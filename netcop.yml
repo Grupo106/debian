@@ -248,7 +248,7 @@
     command: python setup.py install chdir={{ src_path }}/actualizador
 
   - name: Configurar cron
-    cron: user=netcop special_time=hourly job=actualizador
+    cron: user=netcop special_time=hourly job=/usr/local/bin/actualizador
      
 
   # configuracion de puente de red
