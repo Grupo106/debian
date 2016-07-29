@@ -6,6 +6,8 @@
     - postgresql_user: netcop
     - postgresql_password: netcop
     - src_path: /home/netcop/src # donde se guardara el codigo fuente
+    - data_path: /home/netcop/data # donde se guardara los datos generados por
+                                   # los scripts
     - bin_path: /usr/local/bin # directorio donde estaran los binarios
     - etc_path: /etc/netcop # directorio donde estaran los archivos de conf
     - www_path: /var/www/netcop # directorio donde estaran los archivos PHP
@@ -49,10 +51,11 @@
       - vim
 
   - name: Crear carpetas de netcop
-    file: name={{ etc_path }} state=directory
+    file: name={{ item }} state=directory
     with_items:
       - "{{ src_path }}"
       - "{{ etc_path }}"
+      - "{{ data_path }}"
       - "{{ www_path }}"
 
   - name: Copiar archivo configuracion netcop
@@ -249,7 +252,7 @@
     command: python setup.py install chdir={{ src_path }}/actualizador
 
   - name: Configurar cron
-    cron: user=netcop special_time=hourly job=/usr/local/bin/actualizador
+    cron: special_time=hourly job=/usr/local/bin/actualizador
 
 
   # configuracion de puente de red
