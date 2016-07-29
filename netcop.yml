@@ -115,7 +115,7 @@
   - name: Establecer privilegios del usuario {{ postgresql_user }}
     postgresql_privs: db={{ postgresql_db }}
                       roles={{ postgresql_user }}
-                      privs=INSERT,UPDATE,SELECT
+                      privs=INSERT,UPDATE,SELECT,DELETE
                       objs=ALL_IN_SCHEMA
     become_user: postgres
 
