@@ -51,7 +51,7 @@
       - vim
 
   - name: Crear carpetas de netcop
-    file: name={{ item }} state=directory
+    file: name={{ item }} owner=netcop state=directory
     with_items:
       - "{{ src_path }}"
       - "{{ etc_path }}"
