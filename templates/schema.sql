@@ -74,14 +74,15 @@ CREATE TABLE IF NOT EXISTS puerto (
 --  Relacion muchos a muchos entre clase de trafico y puerto
 --
 --  Se define el grupo al que pertenece la relacion. Por defecto existen dos
---  grupos, el 'o' y el 'i'. El grupo 'o' se utiliza para los hosts que esten
---  en la Internet (outside) y el grupo 'i' para hosts que se encuentren en la
---  red interna (inside).
+--  grupos, el 'a' y el 'b'. Si la clase debe coincidir con solo una direccion
+--  de red se utiliza el grupo 'a', en caso de que se tenga que cumplir que el
+--  paquete sea de origen X y destino Y se utiliza el grupo 'a' y el 'b' para
+--  X y Y respectivamente
 CREATE TABLE IF NOT EXISTS clase_cidr (
     id_clase integer not null REFERENCES clase_trafico ON DELETE CASCADE,
     id_cidr integer not null REFERENCES cidr ON DELETE CASCADE,
-    grupo char not null default 'o',
-    PRIMARY KEY (id_clase, id_cidr, grupo)
+    grupo char not null default 'a',
+    PRIMARY KEY (id_clase, id_cidr)
 );
 
 -- tabla clase_puerto
@@ -89,14 +90,58 @@ CREATE TABLE IF NOT EXISTS clase_cidr (
 --  Relacion muchos a muchos entre clase de trafico y puerto
 --
 --  Se define el grupo al que pertenece la relacion. Por defecto existen dos
---  grupos, el 'o' y el 'i'. El grupo 'o' se utiliza para los hosts que esten
---  en la Internet (outside) y el grupo 'i' para hosts que se encuentren en la
---  red interna (inside).
+--  grupos, el 'a' y el 'b'. Si la clase debe coincidir con solo un puerto
+--  se utiliza el grupo 'a', en caso de que se tenga que cumplir que el
+--  paquete sea de puerto origen X y puerto destino Y se utiliza el grupo 'a'
+--  y el 'b' para X y Y respectivamente
 CREATE TABLE IF NOT EXISTS clase_puerto (
     id_clase integer not null REFERENCES clase_trafico ON DELETE CASCADE,
     id_puerto integer not null REFERENCES puerto ON DELETE CASCADE,
-    grupo char not null default 'o',
-    PRIMARY KEY (id_clase, id_puerto, grupo)
+    grupo char not null default 'a',
+    PRIMARY KEY (id_clase, id_puerto)
+);
+
+-- tabla politica
+-- ---------------------------------------------------------------------------
+--  Define reglas de trafico creadas por el usuario
+CREATE TABLE IF NOT EXISTS politica (
+    id_politica serial PRIMARY KEY,
+    nombre varchar(63) NOT NULL,
+    descripcion varchar(255) NULL,
+    activa boolean NOT NULL DEFAULT 'TRUE',
+    prioridad smallint NULL,
+    velocidad_maxima integer NULL -- en kbit/s
+);
+
+-- tabla objetivo
+-- ---------------------------------------------------------------------------
+--  Especifica los objetivos a los que se les va a aplicar la politica.
+--
+--  ### Tipos
+--    * 'd': Destino
+--    * 'o': Origen
+CREATE TABLE IF NOT EXISTS objetivo (
+    id_politica integer NOT NULL REFERENCES politica ON DELETE CASCADE,
+    id_clase integer NULL REFERENCES clase_trafico ON DELETE CASCADE,
+    tipo char(1) NOT NULL DEFAULT 'd',
+    direccion_fisica macaddr NULL,
+    PRIMARY KEY (id_politica, id_clase)
+);
+
+-- tabla rango_horario
+-- ---------------------------------------------------------------------------
+--  Especifica los rangos horarios en los que la politica esta activa
+--
+--  ### Columnas
+--   * dia: Dia de la semana, entre 0 y 6 siendo 0 el dia domingo
+--   * hora_inicial: Hora de inicio del rango valido 
+--   * hora_fin: Hora de fin del rango valido 
+CREATE TABLE IF NOT EXISTS rango_horario (
+    id_rango_horario serial PRIMARY KEY,
+    id_politica integer NOT NULL REFERENCES politica ON DELETE CASCADE,
+    dia smallint NOT NULL,
+    hora_inicial time NOT NULL,
+    hora_fin time NOT NULL
 );
 
 -- Vistas
