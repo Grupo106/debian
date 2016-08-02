@@ -121,11 +121,11 @@ CREATE TABLE IF NOT EXISTS politica (
 --    * 'd': Destino
 --    * 'o': Origen
 CREATE TABLE IF NOT EXISTS objetivo (
+    id_objetivo serial PRIMARY KEY,
     id_politica integer NOT NULL REFERENCES politica ON DELETE CASCADE,
     id_clase integer NULL REFERENCES clase_trafico ON DELETE CASCADE,
     tipo char(1) NOT NULL DEFAULT 'd',
-    direccion_fisica macaddr NULL,
-    PRIMARY KEY (id_politica, id_clase)
+    direccion_fisica macaddr NULL
 );
 
 -- tabla rango_horario
