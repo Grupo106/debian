@@ -6,6 +6,8 @@
     - postgresql_user: netcop
     - postgresql_password: netcop
     - src_path: /home/netcop/src # donde se guardara el codigo fuente
+    - data_path: /home/netcop/data # donde se guardara los datos generados por
+                                   # los scripts
     - bin_path: /usr/local/bin # directorio donde estaran los binarios
     - etc_path: /etc/netcop # directorio donde estaran los archivos de conf
     - www_path: /var/www/netcop # directorio donde estaran los archivos PHP
@@ -13,6 +15,10 @@
     - if_inside: eth1
     - codeigniter_version: 3.0.6
     - production: no
+    # url donde el actualizador consultara la ultima version
+    - netcop_url_version: http://netcop.ftp.sh/version
+    # url donde el actualizador descargara la ultima version
+    - netcop_url_descarga: http://netcop.ftp.sh/descarga
 
   # Tasks
   # =========================================================================
@@ -21,13 +27,19 @@
   # -------------------------------------------------------------------------
   tasks:
   - name: Instalar dependencias
-    apt: name={{ item }} update_cache=yes
+    apt: name={{ item }}
     with_items:
       - bridge-utils
       - git
       - make
       - gcc
       - locales
+
+  - name: Desinstalar pip
+    apt: name=python-pip state=absent
+
+  - name: Instalar pip
+    easy_install: name=pip
 
   - name: Debe existir usuario netcop
     user: name=netcop
@@ -39,10 +51,11 @@
       - vim
 
   - name: Crear carpetas de netcop
-    file: name={{ etc_path }} state=directory
+    file: name={{ item }} owner=netcop state=directory
     with_items:
       - "{{ src_path }}"
       - "{{ etc_path }}"
+      - "{{ data_path }}"
       - "{{ www_path }}"
 
   - name: Copiar archivo configuracion netcop
@@ -105,7 +118,7 @@
   - name: Establecer privilegios del usuario {{ postgresql_user }}
     postgresql_privs: db={{ postgresql_db }}
                       roles={{ postgresql_user }}
-                      privs=INSERT,UPDATE,SELECT
+                      privs=INSERT,UPDATE,SELECT,DELETE
                       objs=ALL_IN_SCHEMA
     become_user: postgres
 
@@ -218,6 +231,30 @@
 
   - name: Iniciar nginx
     service: name=nginx enabled=yes state=started
+
+  # actualizador
+  # -------------------------------------------------------------------------
+  - name: Descargar ultima version del actualizador
+    git: repo=https://github.com/Grupo106/actualizador.git
+         dest={{ src_path }}/actualizador
+         version=master
+         depth=1
+         force=yes
+
+  - name: Instalar dependencias actualizador
+    pip: requirements=requirements.txt chdir={{ src_path }}/actualizador
+
+  - name: Configurar actualizador
+    template: src=templates/actualizador.py.j2
+              dest={{ src_path }}/actualizador/netcop/config.py
+
+  - name: Instalar actualizador
+    command: python setup.py install chdir={{ src_path }}/actualizador
+
+  - name: Configurar cron
+    cron: name=actualizador user=netcop special_time=hourly
+          job=/usr/local/bin/actualizador
+
 
   # configuracion de puente de red
   # -------------------------------------------------------------------------
