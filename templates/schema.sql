@@ -170,7 +170,7 @@ CREATE TABLE usuarios
 (
   id_usu serial NOT NULL,
   usuario character varying(16) NOT NULL,
-  password character varying(16) NOT NULL,
+  password character varying(64) NOT NULL,
   nombre character varying(16),
   apellido character varying,
   mail character varying(32),
