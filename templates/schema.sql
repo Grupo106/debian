@@ -160,3 +160,21 @@ FROM cidr c INNER JOIN clase_cidr j USING (id_cidr);
 CREATE OR REPLACE VIEW v_clase_puerto AS
 SELECT j.id_clase, p.numero, p.protocolo, j.grupo
 FROM puerto p INNER JOIN clase_puerto j USING (id_puerto);
+
+
+-- tabla usuario
+-- ---------------------------------------------------------------------------
+--  almacena a los usuarios del sistema
+
+CREATE TABLE usuarios
+(
+  id_usu serial NOT NULL,
+  usuario character varying(16) NOT NULL,
+  password character varying(64) NOT NULL,
+  nombre character varying(16),
+  apellido character varying,
+  mail character varying(32),
+  rol character varying(16),
+  CONSTRAINT id PRIMARY KEY (id_usu)
+)
+
