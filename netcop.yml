@@ -205,6 +205,16 @@
               dest=/etc/nginx/sites-available/netcop
     notify: reiniciar nginx
 
+  - name: nginx - Copiar certificado SSL
+    copy: src=templates/netcop.cert
+          dest=/etc/nginx/sites-available/netcop
+    notify: reiniciar nginx
+
+  - name: nginx - Copiar llave SSL
+    copy: src=templates/netcop.key
+          dest=/etc/nginx/sites-available/netcop
+    notify: reiniciar nginx
+
   - name: nginx - Deshabilitar sitio por default
     file: path=/etc/nginx/sites-enabled/default state=absent
     notify: reiniciar nginx

@@ -1,9 +1,12 @@
 # {{ ansible_managed }}
 server {
 	listen 80 default_server;
+    listen 443 ssl;
+	server_name netcop;
+    ssl_certificate netcop.crt;
+    ssl_certificate_key netcop.key;
 	root {{ www_path }};
 	index index.php;
-	server_name netcop;
 	location / {
 		try_files $uri $uri/ =404;
 	}
