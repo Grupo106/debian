@@ -205,12 +205,12 @@
 
   - name: nginx - Copiar certificado SSL
     copy: src=templates/netcop.crt
-          dest=/etc/nginx/sites-available/netcop/netcop.crt
+          dest=/etc/nginx/netcop.crt
     notify: reiniciar nginx
 
   - name: nginx - Copiar llave SSL
     copy: src=templates/netcop.key
-          dest=/etc/nginx/sites-available/netcop/netcop.key
+          dest=/etc/nginx/netcop.key
     notify: reiniciar nginx
 
   - name: nginx - Deshabilitar sitio por default
