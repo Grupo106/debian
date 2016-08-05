@@ -142,7 +142,6 @@
     git: repo=https://github.com/Grupo106/adquisidor.git
          dest={{ src_path }}/adquisidor
          version=master
-         depth=1
     register: compile
 
   - name: Compilar e instalar adquisidor
@@ -175,7 +174,6 @@
     git: repo=https://github.com/Grupo106/analizador.git
          dest={{ src_path }}/analizador
          version=master
-         depth=1
     register: compile
 
   - name: Compilar e instalar analizador
@@ -206,7 +204,7 @@
     notify: reiniciar nginx
 
   - name: nginx - Copiar certificado SSL
-    copy: src=templates/netcop.cert
+    copy: src=templates/netcop.crt
           dest=/etc/nginx/sites-available/netcop
     notify: reiniciar nginx
 
@@ -229,7 +227,6 @@
     git: repo=https://github.com/Grupo106/UI.git
          dest={{ www_path }}
          version=master
-         depth=1
          force=yes
 
   - name: Cambiar permisos archivos
