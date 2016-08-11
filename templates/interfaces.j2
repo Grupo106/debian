@@ -10,5 +10,8 @@ iface lo inet loopback
 auto br0
 iface {{ if_outside }} inet manual
 iface {{ if_inside }} inet manual
-iface br0 inet dhcp
+iface br0 inet static
+    address {{ ansible_default_ipv4.address }}
+    netmask {{ ansible_default_ipv4.netmask }}
+    gateway {{ ansible_default_ipv4.gateway }}
     bridge_ports {{ if_outside }} {{ if_inside }}
