@@ -257,7 +257,7 @@
 
   - name: Configurar actualizador
     template: src=templates/actualizador.py.j2
-              dest={{ src_path }}/actualizador/netcop/config.py
+              dest={{ src_path }}/actualizador/netcop/actualizador/config.py
 
   - name: Instalar actualizador
     command: python setup.py install chdir={{ src_path }}/actualizador
