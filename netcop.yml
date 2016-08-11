@@ -275,6 +275,13 @@
     notify:
       - reboot
 
+  - name: Deshabilitar IPv6
+    lineinfile: 
+      dest: /etc/sysctl.conf 
+      line: net.ipv6.conf.all.disable_ipv6=1
+    notify:
+      - reboot
+
   # Handlers
   # =========================================================================
   handlers:
