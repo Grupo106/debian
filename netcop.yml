@@ -93,7 +93,7 @@
   - name: Configurar permisos
     template: src=templates/pg_hba.conf.j2
               dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
-    notify: reiniciar postgres
+    notify: reiniciar postgresql
 
   - name: Habilitar servicio postgresql
     service: name=postgresql enabled=yes state=started
@@ -231,6 +231,10 @@
 
   - name: Cambiar permisos archivos
     file: path={{ www_path }} recurse=yes owner=netcop group=www-data
+
+  - name: Configurar CodeIgniter
+    template: src=templates/config.php.j2
+              dest={{ www_path }}/application/config/config.php
 
   - name: Configurar conexion con base de datos
     template: src=templates/database.php.j2

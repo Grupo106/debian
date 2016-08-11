@@ -1,18 +1,26 @@
 # {{ ansible_managed }}
 server {
-	listen 80 default_server;
+    listen 80 default_server;
     listen 443 ssl;
-	server_name netcop;
+    server_name netcop;
     ssl_certificate netcop.crt;
     ssl_certificate_key netcop.key;
-	root {{ www_path }};
-	index index.php;
-	location / {
-		try_files $uri $uri/ =404;
-	}
-	location ~ \.php$ {
-		include snippets/fastcgi-php.conf;
-		fastcgi_pass unix:/var/run/php5-fpm.sock;
-	}
+    root {{ www_path }};
+    index index.php;
+    autoindex on;
+    
+    location ~* \.(ico|css|js|gif|jpe?g|png)$ {
+        expires max;
+        add_header Pragma public;
+        add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+    }
+    location / {
+        try_files $uri $uri/ /index.php;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+    }
 }
 
