@@ -106,8 +106,13 @@ CREATE TABLE IF NOT EXISTS politica (
     descripcion varchar(255) NULL,
     activa boolean NOT NULL DEFAULT 'TRUE',
     prioridad smallint NULL,
-    velocidad_maxima integer NULL -- en kbit/s
+    velocidad_bajada integer NULL -- en kbit/s
+    velocidad_subida integer NULL -- en kbit/s
 );
+
+-- modoficaciones a la tabla politica
+ALTER TABLE politica RENAME COLUMN velocidad_maxima TO velocidad_bajada;
+ALTER TABLE politica ADD COLUMN velocidad_subida integer NULL;
 
 -- tabla objetivo
 -- ---------------------------------------------------------------------------
