@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS clase_trafico (
     id_clase serial PRIMARY KEY,
     nombre varchar(32) not null,
     descripcion varchar(160) not null,
-    tipo smallint not null default 0
+    tipo smallint not null default 1
 );
 
 ALTER TABLE IF EXISTS clase_trafico 
@@ -178,3 +178,8 @@ CREATE TABLE usuarios
   CONSTRAINT id PRIMARY KEY (id_usu)
 )
 
+-- Limpieza
+-- ---------------------------------------------------------------------------
+--  Limpia clases de trafico de sistema mal creadas con id menores a mil
+--  millones
+DELETE FROM clase_trafico where id_clase < 1000000000 and tipo = 0;
