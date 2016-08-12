@@ -73,15 +73,13 @@ CREATE TABLE IF NOT EXISTS puerto (
 -- ---------------------------------------------------------------
 --  Relacion muchos a muchos entre clase de trafico y puerto
 --
---  Se define el grupo al que pertenece la relacion. Por defecto existen dos
---  grupos, el 'a' y el 'b'. Si la clase debe coincidir con solo una direccion
---  de red se utiliza el grupo 'a', en caso de que se tenga que cumplir que el
---  paquete sea de origen X y destino Y se utiliza el grupo 'a' y el 'b' para
---  X y Y respectivamente
+--  ### Grupos
+--   * 'o': Outside, En Internet
+--   * 'i': Inside, En la red local
 CREATE TABLE IF NOT EXISTS clase_cidr (
     id_clase integer not null REFERENCES clase_trafico ON DELETE CASCADE,
     id_cidr integer not null REFERENCES cidr ON DELETE CASCADE,
-    grupo char not null default 'a',
+    grupo char not null default 'o',
     PRIMARY KEY (id_clase, id_cidr)
 );
 
@@ -89,15 +87,13 @@ CREATE TABLE IF NOT EXISTS clase_cidr (
 -- ---------------------------------------------------------------
 --  Relacion muchos a muchos entre clase de trafico y puerto
 --
---  Se define el grupo al que pertenece la relacion. Por defecto existen dos
---  grupos, el 'a' y el 'b'. Si la clase debe coincidir con solo un puerto
---  se utiliza el grupo 'a', en caso de que se tenga que cumplir que el
---  paquete sea de puerto origen X y puerto destino Y se utiliza el grupo 'a'
---  y el 'b' para X y Y respectivamente
+--  ### Grupos
+--   * 'o': Outside, En Internet
+--   * 'i': Inside, En la red local
 CREATE TABLE IF NOT EXISTS clase_puerto (
     id_clase integer not null REFERENCES clase_trafico ON DELETE CASCADE,
     id_puerto integer not null REFERENCES puerto ON DELETE CASCADE,
-    grupo char not null default 'a',
+    grupo char not null default 'o',
     PRIMARY KEY (id_clase, id_puerto)
 );
 
