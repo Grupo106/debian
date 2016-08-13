@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS politica (
     descripcion varchar(255) NULL,
     activa boolean NOT NULL DEFAULT 'TRUE',
     prioridad smallint NULL,
-    velocidad_bajada integer NULL -- en kbit/s
+    velocidad_bajada integer NULL, -- en kbit/s
     velocidad_subida integer NULL -- en kbit/s
 );
 
@@ -177,7 +177,7 @@ CREATE TABLE usuarios
   mail character varying(32),
   rol character varying(16),
   CONSTRAINT id PRIMARY KEY (id_usu)
-)
+);
 
 -- Limpieza
 -- ---------------------------------------------------------------------------
