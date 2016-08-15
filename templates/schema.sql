@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS paquetes (
 );
 
 CREATE INDEX hora_idx ON paquetes(hora_captura);
+ALTER TABLE paquetes OWNER TO netcop;
 
 -- tabla clase de trafico
 -- ---------------------------------------------------------------
@@ -39,6 +40,7 @@ CREATE TABLE IF NOT EXISTS clase_trafico (
     descripcion varchar(160) not null,
     tipo smallint not null default 0
 );
+ALTER TABLE clase_trafico OWNER TO netcop;
 
 ALTER TABLE IF EXISTS clase_trafico 
 ADD COLUMN activa boolean DEFAULT TRUE NOT NULL;
@@ -55,6 +57,7 @@ CREATE TABLE IF NOT EXISTS cidr (
     direccion varchar(16) not null,
     prefijo smallint not null default 32 -- mascara subred de host --
 );
+ALTER TABLE cidr OWNER TO netcop;
 
 -- tabla puerto
 -- ---------------------------------------------------------------
@@ -68,6 +71,7 @@ CREATE TABLE IF NOT EXISTS puerto (
     numero integer not null,
     protocolo smallint not null default 0
 );
+ALTER TABLE puerto OWNER TO netcop;
 
 -- tabla clase_cidr
 -- ---------------------------------------------------------------
@@ -82,6 +86,7 @@ CREATE TABLE IF NOT EXISTS clase_cidr (
     grupo char not null default 'o',
     PRIMARY KEY (id_clase, id_cidr)
 );
+ALTER TABLE clase_cidr OWNER TO netcop;
 
 -- tabla clase_puerto
 -- ---------------------------------------------------------------
@@ -96,6 +101,7 @@ CREATE TABLE IF NOT EXISTS clase_puerto (
     grupo char not null default 'o',
     PRIMARY KEY (id_clase, id_puerto)
 );
+ALTER TABLE clase_puerto OWNER TO netcop;
 
 -- tabla politica
 -- ---------------------------------------------------------------------------
@@ -108,6 +114,7 @@ CREATE TABLE IF NOT EXISTS politica (
     prioridad smallint NULL,
     velocidad_maxima integer NULL -- en kbit/s
 );
+ALTER TABLE politica OWNER TO netcop;
 
 -- tabla objetivo
 -- ---------------------------------------------------------------------------
@@ -123,6 +130,7 @@ CREATE TABLE IF NOT EXISTS objetivo (
     tipo char(1) NOT NULL DEFAULT 'd',
     direccion_fisica macaddr NULL
 );
+ALTER TABLE objetivo OWNER TO netcop;
 
 -- tabla rango_horario
 -- ---------------------------------------------------------------------------
@@ -139,6 +147,26 @@ CREATE TABLE IF NOT EXISTS rango_horario (
     hora_inicial time NOT NULL,
     hora_fin time NOT NULL
 );
+ALTER TABLE rango_horario OWNER TO netcop;
+
+-- tabla usuario
+-- ---------------------------------------------------------------------------
+--  almacena a los usuarios del sistema
+
+CREATE TABLE usuarios
+(
+  id_usu serial NOT NULL,
+  usuario character varying(16) NOT NULL,
+  password character varying(64) NOT NULL,
+  nombre character varying(16),
+  apellido character varying,
+  mail character varying(32),
+  rol character varying(16),
+  CONSTRAINT id PRIMARY KEY (id_usu)
+)
+ALTER TABLE usuarios OWNER TO netcop;
+
+
 
 -- Vistas
 -- ========================================================================
@@ -156,21 +184,3 @@ FROM cidr c INNER JOIN clase_cidr j USING (id_cidr);
 CREATE OR REPLACE VIEW v_clase_puerto AS
 SELECT j.id_clase, p.numero, p.protocolo, j.grupo
 FROM puerto p INNER JOIN clase_puerto j USING (id_puerto);
-
-
--- tabla usuario
--- ---------------------------------------------------------------------------
---  almacena a los usuarios del sistema
-
-CREATE TABLE usuarios
-(
-  id_usu serial NOT NULL,
-  usuario character varying(16) NOT NULL,
-  password character varying(64) NOT NULL,
-  nombre character varying(16),
-  apellido character varying,
-  mail character varying(32),
-  rol character varying(16),
-  CONSTRAINT id PRIMARY KEY (id_usu)
-)
-
