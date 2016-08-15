@@ -115,10 +115,11 @@ CREATE TABLE IF NOT EXISTS politica (
     velocidad_bajada integer NULL, -- en kbit/s
     velocidad_subida integer NULL -- en kbit/s
 );
+ALTER TABLE politica OWNER TO netcop;
+
 -- modoficaciones a la tabla politica
 ALTER TABLE politica RENAME COLUMN velocidad_maxima TO velocidad_bajada;
 ALTER TABLE politica ADD COLUMN velocidad_subida integer NULL;
-ALTER TABLE politica OWNER TO netcop;
 
 -- tabla objetivo
 -- ---------------------------------------------------------------------------
@@ -167,8 +168,11 @@ CREATE TABLE usuarios
   mail character varying(32),
   rol character varying(16),
   CONSTRAINT id PRIMARY KEY (id_usu)
+<<<<<<< HEAD
 )
 ALTER TABLE usuarios OWNER TO netcop;
+
+
 
 -- Vistas
 -- ========================================================================
@@ -186,9 +190,12 @@ FROM cidr c INNER JOIN clase_cidr j USING (id_cidr);
 CREATE OR REPLACE VIEW v_clase_puerto AS
 SELECT j.id_clase, p.numero, p.protocolo, j.grupo
 FROM puerto p INNER JOIN clase_puerto j USING (id_puerto);
+=======
+);
 
 -- Limpieza
 -- ---------------------------------------------------------------------------
 --  Limpia clases de trafico de sistema mal creadas con id menores a mil
 --  millones
 DELETE FROM clase_trafico where id_clase < 1000000000 and tipo = 0;
+>>>>>>> e6bc892db4008000d168b6c59226bc003a984782
