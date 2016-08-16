@@ -13,7 +13,6 @@
     - www_path: /var/www/netcop # directorio donde estaran los archivos PHP
     - if_outside: eth0
     - if_inside: eth1
-    - codeigniter_version: 3.0.6
     - production: no
     # url donde el actualizador consultara la ultima version
     - netcop_url_version: http://netcop.ftp.sh/version

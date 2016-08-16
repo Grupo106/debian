@@ -4,10 +4,19 @@
 outside={{ if_outside }}
 # Interfaz que va conectada al switch hacia la LAN
 inside={{ if_inside }}
+# url donde consultara la ultima version de firmas
+url_version={{ netcop_url_version }}
+# url donde descargara la ultima version de firmas
+url_download={{ netcop_url_descarga }}
+# archivo donde guardara la ultima version de firmas instalada
+local_version={{ data_path }}/actualizador
 
 [database]
 # si esta vacio se conecta mediante socket de unix
 host=
+# nombre de base de datos
 database={{ postgresql_db }}
+# usuario de base de datos
 user={{ postgresql_user }}
+# contraseña de base de datos
 password={{ postgresql_password }}
