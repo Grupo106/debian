@@ -15,9 +15,9 @@
     - if_inside: eth1
     - production: no
     # url donde el actualizador consultara la ultima version
-    - netcop_url_version: http://netcop.ftp.sh/version
+    - netcop_url_version: https://netcop-netar.rhcloud.com/version/
     # url donde el actualizador descargara la ultima version
-    - netcop_url_descarga: http://netcop.ftp.sh/descarga
+    - netcop_url_descarga: https://netcop-netar.rhcloud.com/descarga/ 
 
   # Tasks
   # =========================================================================
