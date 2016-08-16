@@ -259,7 +259,7 @@
 
   - name: Configurar cron
     cron: name=actualizador user=netcop special_time=hourly
-          job={{ bin_path }}/actualizador
+          job={{ bin_path }}/actualizar
 
 
   # configuracion de puente de red
