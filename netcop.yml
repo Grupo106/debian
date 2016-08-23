@@ -270,7 +270,7 @@
 
   - name: Configurar cron
     cron: name=despachante user=netcop minute="*/1"
-          job="{{ bin_path }}/despachante -t"
+          job="{{ bin_path }}/despachar -t"
 
   # configuracion de puente de red
   # -------------------------------------------------------------------------
