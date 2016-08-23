@@ -17,7 +17,7 @@
     # url donde el actualizador consultara la ultima version
     - netcop_url_version: https://netcop-netar.rhcloud.com/version/
     # url donde el actualizador descargara la ultima version
-    - netcop_url_descarga: https://netcop-netar.rhcloud.com/descarga/ 
+    - netcop_url_descarga: https://netcop-netar.rhcloud.com/descarga/
 
   # Tasks
   # =========================================================================
@@ -141,7 +141,6 @@
     git: repo=https://github.com/Grupo106/adquisidor.git
          dest={{ src_path }}/adquisidor
          version=master
-    register: compile
 
   - name: Compilar e instalar adquisidor
     command: make {{ item }} chdir={{ src_path }}/adquisidor
@@ -153,7 +152,6 @@
       - POSTGRESQL_DB: "{{ postgresql_db }}"
       - POSTGRESQL_USER: "{{ postgresql_user }}"
       - POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
-    when: compile
 
   - name: Instalar servicio adquisidor
     template: src=templates/adquisidor.service.j2
@@ -173,7 +171,6 @@
     git: repo=https://github.com/Grupo106/analizador.git
          dest={{ src_path }}/analizador
          version=master
-    register: compile
 
   - name: Compilar e instalar analizador
     command: make {{ item }} chdir={{ src_path }}/analizador
@@ -185,7 +182,6 @@
       POSTGRESQL_DB: "{{ postgresql_db }}"
       POSTGRESQL_USER: "{{ postgresql_user }}"
       POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
-    when: compile
 
   # UI
   # -------------------------------------------------------------------------
@@ -261,6 +257,24 @@
     cron: name=actualizador user=netcop special_time=hourly
           job={{ bin_path }}/actualizar
 
+  # despachante
+  # -------------------------------------------------------------------------
+  - name: Descargar ultima version del despachante
+    git: repo=https://github.com/Grupo106/despachante.git
+         dest={{ src_path }}/despachante
+         version=master
+         depth=1
+         force=yes
+
+  - name: Instalar dependencias despachante
+    pip: requirements=requirements.txt chdir={{ src_path }}/despachante
+
+  - name: Instalar despachante
+    command: python setup.py install chdir={{ src_path }}/despachante
+
+  - name: Configurar cron
+    cron: name=despachante user=netcop minute="*/1"
+          job="{{ bin_path }}/despachante -t"
 
   # configuracion de puente de red
   # -------------------------------------------------------------------------
@@ -271,8 +285,8 @@
       - reboot
 
   - name: Deshabilitar IPv6
-    lineinfile: 
-      dest: /etc/sysctl.conf 
+    lineinfile:
+      dest: /etc/sysctl.conf
       line: net.ipv6.conf.all.disable_ipv6=1
     notify:
       - reboot
