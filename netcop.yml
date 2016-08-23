@@ -48,6 +48,8 @@
     with_items:
       - screen
       - vim
+      - dnsutils
+    when: not production
 
   - name: Crear carpetas de netcop
     file: name={{ item }} owner=netcop state=directory
