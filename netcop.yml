@@ -244,8 +244,6 @@
     git: repo=https://github.com/Grupo106/actualizador.git
          dest={{ src_path }}/actualizador
          version=master
-         depth=1
-         force=yes
 
   - name: Instalar dependencias actualizador
     pip: requirements=requirements.txt chdir={{ src_path }}/actualizador
@@ -263,8 +261,6 @@
     git: repo=https://github.com/Grupo106/despachante.git
          dest={{ src_path }}/despachante
          version=master
-         depth=1
-         force=yes
 
   - name: Instalar dependencias despachante
     pip: requirements=requirements.txt chdir={{ src_path }}/despachante
