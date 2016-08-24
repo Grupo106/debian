@@ -14,8 +14,16 @@
 - name: Instalar pip
   easy_install: name=pip
 
-- name: Debe existir usuario netcop
-  user: name=netcop
+- name: Crear usuario y grupo netcop
+  user: name=netcop group=netcop state=present
+ 
+- name: Agregar grupo netcop al usuario nginx
+  user: name=www-data groups=netcop append=yes
+
+- name: Configurar sudo
+  template: src=templates/sudoers.d.j2
+            dest=/etc/sudoers.d/netcop
+            mode=0440
 
 - name: Instalar paquetes opcionales
   apt: name={{ item }}

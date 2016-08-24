@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+# Brinda privilegios para el despacho de politicas a los usuarios que esten
+# dentro del grupo ´netcop´
+Cmnd_Alias DESPACHAR = /sbin/tc, /sbin/iptables
+%netcop ALL= NOPASSWD: DESPACHAR
