@@ -1,0 +1,6 @@
+---
+postgresql_version: 9.4 # version de postgres a utilizar
+postgresql_host:
+postgresql_db: netcop
+postgresql_user: netcop
+postgresql_password: netcop

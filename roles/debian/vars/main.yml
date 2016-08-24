@@ -1,0 +1,19 @@
+---
+# Directorios utilizados por Netcop
+# ---------------------------------------------------------------------------
+src_path: /home/netcop/src # donde se guardara el codigo fuente
+data_path: /home/netcop/data # donde se guardara los datos generados por
+                             # los scripts
+bin_path: /usr/local/bin # directorio donde estaran los binarios
+etc_path: /etc/netcop # directorio donde estaran los archivos de conf
+www_path: /var/www/netcop # directorio donde estaran los archivos PHP
+
+# interfaz que va conectada a Internet
+if_outside: eth0
+# interfaz que va conectada a la red local
+if_inside: eth1
+# url donde el actualizador consultara la ultima version
+netcop_url_version: https://netcop-netar.rhcloud.com/version/
+# url donde el actualizador descargara la ultima version
+netcop_url_descarga: https://netcop-netar.rhcloud.com/descarga/
+

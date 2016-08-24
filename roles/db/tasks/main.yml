@@ -1,0 +1,62 @@
+---
+- name: Crear locales
+  locale_gen: name=en_US.UTF-8 state=present
+
+- name: Instalar PostgreSQL {{ postgresql_version }}
+  apt: name={{ item }}
+  notify: crear cluster
+  with_items:
+    - python-psycopg2
+    - postgresql-{{ postgresql_version }}
+
+- name: Crear cluster
+  shell: pg_createcluster {{ postgresql_version }} main --start || /bin/true
+  environment:
+    - LC_ALL: en_US.UTF-8
+
+- name: Habilitar postgres para clientes externos
+  lineinfile:
+      dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+      line: listen_addresses = '*'
+  when: not production
+  notify: reiniciar postgresql
+
+- name: Configurar permisos
+  template: src=templates/pg_hba.conf.j2
+            dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+  notify: reiniciar postgresql
+
+- name: Habilitar servicio postgresql
+  service: name=postgresql enabled=yes state=started
+
+- name: Crear usuario de postgres {{ postgresql_user }}
+  postgresql_user: name={{ postgresql_user }}
+                   password={{ postgresql_password }}
+  become_user: postgres
+
+- name: Crear base de datos
+  postgresql_db: name={{ postgresql_db }}
+                 owner={{ postgresql_user }}
+  become_user: postgres
+
+- name: Copiar esquema de la base de datos de Netcop
+  copy: src=files/schema.sql dest=/tmp/schema.sql
+
+- name: Crear tablas
+  command: psql -f /tmp/schema.sql -d {{ postgresql_db }}
+  become_user: postgres
+
+- name: Establecer privilegios del usuario {{ postgresql_user }}
+  postgresql_privs: db={{ postgresql_db }}
+                    roles={{ postgresql_user }}
+                    privs=INSERT,UPDATE,SELECT,DELETE
+                    objs=ALL_IN_SCHEMA
+  become_user: postgres
+
+- name: Establecer privilegios del usuario {{ postgresql_user }} (secuencia)
+  postgresql_privs: db={{ postgresql_db }}
+                    roles={{ postgresql_user }}
+                    privs=UPDATE,SELECT
+                    objs=ALL_IN_SCHEMA
+                    type=sequence
+  become_user: postgres

@@ -1,0 +1,3 @@
+---
+- name: reiniciar red
+  service: name=networking state=restarted

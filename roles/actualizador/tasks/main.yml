@@ -1,0 +1,15 @@
+---
+- name: Descargar ultima version del actualizador
+  git: repo=https://github.com/Grupo106/actualizador.git
+       dest={{ src_path }}/actualizador
+       version=master
+
+- name: Instalar dependencias actualizador
+  pip: requirements=requirements.txt chdir={{ src_path }}/actualizador
+
+- name: Instalar actualizador
+  command: python setup.py install chdir={{ src_path }}/actualizador
+
+- name: Configurar cron
+  cron: name=actualizador user=netcop special_time=hourly
+        job={{ bin_path }}/actualizar

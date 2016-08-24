@@ -1,0 +1,9 @@
+- hosts: all
+  roles:
+    - debian
+    - db
+    - adquisidor
+    - analizador
+    - actualizador
+    - despachante
+    - web

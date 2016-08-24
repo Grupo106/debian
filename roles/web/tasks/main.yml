@@ -1,0 +1,53 @@
+---
+- name: Instalar dependencias de UI
+  apt: name={{ item }}
+  with_items:
+    - nginx-light
+    - php5
+    - php5-fpm
+    - php5-pgsql
+
+- name: nginx - Copiar configuracion de nginx
+  template: src=templates/nginx.netcop.j2
+            dest=/etc/nginx/sites-available/netcop
+  notify: reiniciar nginx
+
+- name: nginx - Copiar certificado SSL
+  copy: src=templates/netcop.crt
+        dest=/etc/nginx/netcop.crt
+  notify: reiniciar nginx
+
+- name: nginx - Copiar llave SSL
+  copy: src=templates/netcop.key
+        dest=/etc/nginx/netcop.key
+  notify: reiniciar nginx
+
+- name: nginx - Deshabilitar sitio por default
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  notify: reiniciar nginx
+
+- name: nginx - Habilitar sitio netcop
+  file: dest=/etc/nginx/sites-enabled/netcop
+        src=/etc/nginx/sites-available/netcop
+        state=link
+  notify: reiniciar nginx
+
+- name: Descargar ultima version del modulo UI
+  git: repo=https://github.com/Grupo106/UI.git
+       dest={{ www_path }}
+       version=master
+       force=yes
+
+- name: Cambiar permisos archivos
+  file: path={{ www_path }} recurse=yes owner=netcop group=www-data
+
+- name: Configurar CodeIgniter
+  template: src=templates/config.php.j2
+            dest={{ www_path }}/application/config/config.php
+
+- name: Configurar conexion con base de datos
+  template: src=templates/database.php.j2
+            dest={{ www_path }}/application/config/database.php
+
+- name: Iniciar nginx
+  service: name=nginx enabled=yes state=started

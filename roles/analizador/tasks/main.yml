@@ -1,0 +1,21 @@
+---
+- name: Instalar dependencias analizador
+  apt: name={{ item }}
+  with_items:
+    - libecpg-dev
+
+- name: Descargar ultima version del analizador
+  git: repo=https://github.com/Grupo106/analizador.git
+       dest={{ src_path }}/analizador
+       version=master
+
+- name: Compilar e instalar analizador
+  command: make {{ item }} chdir={{ src_path }}/analizador
+  with_items:
+    - clean
+    - release
+    - install
+  environment:
+    POSTGRESQL_DB: "{{ postgresql_db }}"
+    POSTGRESQL_USER: "{{ postgresql_user }}"
+    POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
