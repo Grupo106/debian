@@ -7,26 +7,26 @@
     - php5-fpm
     - php5-pgsql
 
-- name: nginx - Copiar configuracion de nginx
+- name: Copiar configuracion de nginx
   template: src=templates/nginx.netcop.j2
             dest=/etc/nginx/sites-available/netcop
   notify: reiniciar nginx
 
-- name: nginx - Copiar certificado SSL
-  copy: src=templates/netcop.crt
+- name: Copiar certificado SSL
+  copy: src=files/netcop.crt
         dest=/etc/nginx/netcop.crt
   notify: reiniciar nginx
 
-- name: nginx - Copiar llave SSL
-  copy: src=templates/netcop.key
+- name: Copiar llave SSL
+  copy: src=files/netcop.key
         dest=/etc/nginx/netcop.key
   notify: reiniciar nginx
 
-- name: nginx - Deshabilitar sitio por default
+- name: Deshabilitar sitio por default
   file: path=/etc/nginx/sites-enabled/default state=absent
   notify: reiniciar nginx
 
-- name: nginx - Habilitar sitio netcop
+- name: Habilitar sitio netcop
   file: dest=/etc/nginx/sites-enabled/netcop
         src=/etc/nginx/sites-available/netcop
         state=link
@@ -41,7 +41,7 @@
 - name: Cambiar permisos archivos
   file: path={{ www_path }} recurse=yes owner=netcop group=www-data
 
-- name: Configurar CodeIgniter
+- name: Configurar UI
   template: src=templates/config.php.j2
             dest={{ www_path }}/application/config/config.php
 

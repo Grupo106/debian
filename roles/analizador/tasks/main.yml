@@ -1,15 +1,15 @@
 ---
-- name: Instalar dependencias analizador
+- name: Instalar dependencias
   apt: name={{ item }}
   with_items:
     - libecpg-dev
 
-- name: Descargar ultima version del analizador
+- name: Descargar ultima version
   git: repo=https://github.com/Grupo106/analizador.git
        dest={{ src_path }}/analizador
        version=master
 
-- name: Compilar e instalar analizador
+- name: Compilar e instalar
   command: make {{ item }} chdir={{ src_path }}/analizador
   with_items:
     - clean

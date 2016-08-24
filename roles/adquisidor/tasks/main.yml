@@ -1,16 +1,16 @@
 ---
-- name: Instalar dependencias adquisidor
+- name: Instalar dependencias
   apt: name={{ item }}
   with_items:
     - libecpg-dev
     - libpcap-dev
 
-- name: Descargar ultima version del adquisidor
+- name: Descargar ultima version
   git: repo=https://github.com/Grupo106/adquisidor.git
        dest={{ src_path }}/adquisidor
        version=master
 
-- name: Compilar e instalar adquisidor
+- name: Compilar e instalar
   command: make {{ item }} chdir={{ src_path }}/adquisidor
   with_items:
     - clean
@@ -21,9 +21,9 @@
     - POSTGRESQL_USER: "{{ postgresql_user }}"
     - POSTGRESQL_PASSWORD: "{{ postgresql_password }}"
 
-- name: Instalar servicio adquisidor
+- name: Instalar servicio
   template: src=templates/adquisidor.service.j2
             dest=/etc/systemd/system/adquisidor.service
 
-- name: Iniciar servicio adquisidor
+- name: Iniciar servicio
   service: name=adquisidor enabled=yes state=started

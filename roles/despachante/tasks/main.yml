@@ -1,0 +1,15 @@
+---
+- name: Descargar ultima version
+  git: repo=https://github.com/Grupo106/despachante.git
+       dest={{ src_path }}/despachante
+       version=master
+
+- name: Instalar dependencias
+  pip: requirements=requirements.txt chdir={{ src_path }}/despachante
+
+- name: Instalar
+  command: python setup.py install chdir={{ src_path }}/despachante
+
+- name: Configurar cron
+  cron: name=despachante user=netcop minute="*/1"
+        job="{{ bin_path }}/despachar -t"

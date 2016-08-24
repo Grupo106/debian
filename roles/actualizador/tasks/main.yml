@@ -1,13 +1,13 @@
 ---
-- name: Descargar ultima version del actualizador
+- name: Descargar ultima version
   git: repo=https://github.com/Grupo106/actualizador.git
        dest={{ src_path }}/actualizador
        version=master
 
-- name: Instalar dependencias actualizador
+- name: Instalar dependencias
   pip: requirements=requirements.txt chdir={{ src_path }}/actualizador
 
-- name: Instalar actualizador
+- name: Instalar
   command: python setup.py install chdir={{ src_path }}/actualizador
 
 - name: Configurar cron
