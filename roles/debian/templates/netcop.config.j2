@@ -10,6 +10,10 @@ url_version={{ netcop_url_version }}
 url_download={{ netcop_url_descarga }}
 # archivo donde guardara la ultima version de firmas instalada
 local_version={{ data_path }}/actualizador
+# velocidad del enlace de Internet de bajada en mbit por segundo
+velocidad_bajada={{ velocidad_bajada|default('100') }}
+# velocidad del enlace de Internet de subida en mbit por segundo
+velocidad_subida={{ velocidad_subida|default('100') }}
 
 [database]
 # si esta vacio se conecta mediante socket de unix
