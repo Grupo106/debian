@@ -25,6 +25,10 @@
             dest=/etc/sudoers.d/netcop
             mode=0440
 
+- name: Configurar grub
+  lineinfile: dest=/etc/default/grub regexp=^GRUB_TIMEOUT= line=GRUB_TIMEOUT=0
+  notify: reconfigurar grub
+
 - name: Instalar paquetes opcionales
   apt: name={{ item }}
   with_items:
