@@ -157,7 +157,7 @@ ALTER TABLE rango_horario OWNER TO netcop;
 -- ---------------------------------------------------------------------------
 --  almacena a los usuarios del sistema
 
-CREATE TABLE usuarios
+CREATE TABLE IF NOT EXISTS usuarios
 (
   id_usu serial NOT NULL,
   usuario character varying(16) NOT NULL,
@@ -169,6 +169,7 @@ CREATE TABLE usuarios
   CONSTRAINT id PRIMARY KEY (id_usu)
 )
 ALTER TABLE usuarios OWNER TO netcop;
+ALTER TABLE usuarios ALTER COLUMN password SET DATA type character varying(64) NOT NULL;
 
 -- Vistas
 -- ========================================================================
