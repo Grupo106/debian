@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS usuarios
   CONSTRAINT id PRIMARY KEY (id_usu)
 )
 ALTER TABLE usuarios OWNER TO netcop;
-ALTER TABLE usuarios ADD COLUMN password character varying(64);
+ALTER TABLE usuarios ALTER COLUMN password SET DATA TYPE character varying(64);
 
 -- Vistas
 -- ========================================================================
