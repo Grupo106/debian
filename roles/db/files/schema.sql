@@ -113,11 +113,13 @@ CREATE TABLE IF NOT EXISTS politica (
     activa boolean NOT NULL DEFAULT 'TRUE',
     prioridad smallint NULL,
     velocidad_bajada integer NULL, -- en kbit/s
-    velocidad_subida integer NULL -- en kbit/s
+    velocidad_subida integer NULL, -- en kbit/s
+    fc_creacion timestamp without time zone NULL
 );
 -- modoficaciones a la tabla politica
 ALTER TABLE politica RENAME COLUMN velocidad_maxima TO velocidad_bajada;
 ALTER TABLE politica ADD COLUMN velocidad_subida integer NULL;
+ALTER TABLE politica ADD COLUMN fc_creacion timestamp without time zone NULL;
 ALTER TABLE politica OWNER TO netcop;
 
 -- tabla objetivo
