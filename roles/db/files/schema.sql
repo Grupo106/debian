@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS usuarios
   mail character varying(32),
   rol character varying(16),
   CONSTRAINT id PRIMARY KEY (id_usu)
-)
+);
 ALTER TABLE usuarios OWNER TO netcop;
 ALTER TABLE usuarios ALTER COLUMN password SET DATA TYPE character varying(64);
 
