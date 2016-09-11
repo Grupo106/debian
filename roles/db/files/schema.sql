@@ -113,11 +113,13 @@ CREATE TABLE IF NOT EXISTS politica (
     activa boolean NOT NULL DEFAULT 'TRUE',
     prioridad smallint NULL,
     velocidad_bajada integer NULL, -- en kbit/s
-    velocidad_subida integer NULL -- en kbit/s
+    velocidad_subida integer NULL, -- en kbit/s
+    fc_creacion timestamp without time zone NULL
 );
 -- modoficaciones a la tabla politica
 ALTER TABLE politica RENAME COLUMN velocidad_maxima TO velocidad_bajada;
 ALTER TABLE politica ADD COLUMN velocidad_subida integer NULL;
+ALTER TABLE politica ADD COLUMN fc_creacion timestamp without time zone NULL;
 ALTER TABLE politica OWNER TO netcop;
 
 -- tabla objetivo
@@ -157,7 +159,7 @@ ALTER TABLE rango_horario OWNER TO netcop;
 -- ---------------------------------------------------------------------------
 --  almacena a los usuarios del sistema
 
-CREATE TABLE usuarios
+CREATE TABLE IF NOT EXISTS usuarios
 (
   id_usu serial NOT NULL,
   usuario character varying(16) NOT NULL,
@@ -169,6 +171,7 @@ CREATE TABLE usuarios
   CONSTRAINT id PRIMARY KEY (id_usu)
 )
 ALTER TABLE usuarios OWNER TO netcop;
+ALTER TABLE usuarios ALTER COLUMN password SET DATA TYPE character varying(64);
 
 -- Vistas
 -- ========================================================================

@@ -4,7 +4,6 @@
 
 - name: Instalar PostgreSQL {{ postgresql_version }}
   apt: name={{ item }}
-  notify: crear cluster
   with_items:
     - python-psycopg2
     - postgresql-{{ postgresql_version }}

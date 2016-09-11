@@ -1,3 +1,5 @@
 ---
 - name: reiniciar red
   service: name=networking state=restarted
+- name: reconfigurar grub
+  command: /usr/sbin/update-grub
