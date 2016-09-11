@@ -17,7 +17,7 @@
 
 - name: Crear usuario y grupo netcop
   user: name=netcop group=netcop state=present
- 
+
 - name: Agregar grupo netcop al usuario nginx
   user: name=www-data groups=netcop append=yes
 
@@ -54,9 +54,15 @@
   template: src=templates/motd.j2
             dest=/etc/motd
 
-- name: Configurar puente de red
+- name: Configurar red
   template: src=templates/interfaces.j2
-              dest=/etc/network/interfaces
+            dest=/etc/network/interfaces
+  notify:
+    - reiniciar red
+
+- name: Configurar puente de red
+  template: src=templates/br0.j2
+            dest=/etc/network/interfaces.d/br0
   notify:
     - reiniciar red
 
