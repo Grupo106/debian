@@ -1,4 +1,7 @@
 ---
+- name: Borrar version anterior
+  file: path=/usr/local/bin/actualizador state=absent
+
 - name: Descargar ultima version
   git: repo=https://github.com/Grupo106/actualizador.git
        dest={{ src_path }}/actualizador

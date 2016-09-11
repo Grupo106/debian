@@ -1,4 +1,7 @@
 ---
+- name: Borrar version anterior
+  file: path=/usr/local/bin/analizador state=absent
+
 - name: Instalar dependencias
   apt: name={{ item }}
   with_items:
