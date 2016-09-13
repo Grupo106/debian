@@ -1,0 +1,18 @@
+---
+- name: Crear usuario y grupo netcop
+  user: name=netcop group=netcop state=present
+
+- name: Agregar grupo netcop al usuario nginx
+  user: name=www-data groups=netcop append=yes
+
+- name: Crear carpetas de netcop
+  file: name={{ item }} owner=netcop state=directory
+  with_items:
+    - "{{ src_path }}"
+    - "{{ etc_path }}"
+    - "{{ data_path }}"
+    - "{{ www_path }}"
+
+- name: Copiar archivo configuracion netcop
+  template: src=templates/netcop.config.j2
+            dest={{ etc_path }}/netcop.config
