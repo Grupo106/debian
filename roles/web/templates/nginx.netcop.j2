@@ -9,6 +9,16 @@ server {
     index index.php;
     autoindex on;
     
+    if ($request_uri ~* ^/system) {
+        rewrite ^/(.*)$ /index.php?/$1 last;
+        break;
+    }
+
+    if ($request_uri ~* ^/application) {
+        rewrite ^/(.*)$ /index.php?/$1 last;
+        break;
+    }
+
     location ~* \.(ico|css|js|gif|jpe?g|png)$ {
         expires max;
         add_header Pragma public;
