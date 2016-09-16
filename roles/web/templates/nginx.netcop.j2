@@ -1,33 +1,42 @@
 # {{ ansible_managed }}
+#
+# Configuracion de aplicacion web
+# 
+# (c) Netcop 2016 Universidad Nacional de La Matanza
+
 server {
     listen 80 default_server;
+
+    # configuracion de HTTPS
     listen 443 ssl;
     server_name netcop;
     ssl_certificate netcop.crt;
     ssl_certificate_key netcop.key;
+
+    # Directorio donde se almacena el codigo fuente de la web
     root {{ www_path }};
     index index.php;
-    
-    if ($request_uri ~* ^/system) {
+
+    # Restriccion de acceso a carpetas y archivos no necesarios para el
+    # funcionamiento de la aplicacion web
+    if ($request_uri ~* ^/(system|application|\..*|README.md|LICENSE)) {
         rewrite ^/(.*)$ /index.php?/$1 last;
         break;
     }
 
-    if ($request_uri ~* ^/application) {
-        rewrite ^/(.*)$ /index.php?/$1 last;
-        break;
-    }
-
+    # Establezco cabeceras para el tratamiento de cache en archivos estaticos
     location ~* \.(ico|css|js|gif|jpe?g|png)$ {
         expires max;
         add_header Pragma public;
         add_header Cache-Control "public, must-revalidate, proxy-revalidate";
     }
 
+    # Configuracion de paths
     location / {
         try_files $uri $uri/ /index.php;
     }
 
+    # Configuracion de php
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/var/run/php5-fpm.sock;
