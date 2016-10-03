@@ -54,7 +54,7 @@ ADD COLUMN activa boolean DEFAULT TRUE NOT NULL;
 --  entonces la direccion pertenece a un host.
 CREATE TABLE IF NOT EXISTS cidr (
     id_cidr serial PRIMARY KEY,
-    direccion varchar(16) not null,
+    direccion cidr not null,
     prefijo smallint not null default 32 -- mascara subred de host --
 );
 ALTER TABLE cidr OWNER TO netcop;
