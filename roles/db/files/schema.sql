@@ -173,6 +173,20 @@ CREATE TABLE IF NOT EXISTS usuarios
 ALTER TABLE usuarios OWNER TO netcop;
 ALTER TABLE usuarios ALTER COLUMN password SET DATA TYPE character varying(64);
 
+-- tabla log
+-- ---------------------------------------------------------------------------
+--  almacena a los usuarios del sistema
+
+CREATE TABLE IF NOT EXISTS logs
+(
+  id_log serial NOT NULL,
+  usuario character varying(16),
+  descripcion character varying(255),
+  hora_log timestamp NOT NULL DEFAULT now(),  
+  CONSTRAINT id PRIMARY KEY (id_log)
+);
+ALTER TABLE logs OWNER TO netcop;
+
 -- Vistas
 -- ========================================================================
 
