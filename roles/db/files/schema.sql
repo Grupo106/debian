@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS logs
   id_log serial PRIMARY KEY,
   usuario character varying(16),
   descripcion character varying(255),
-  hora_log timestamp NOT NULL DEFAULT now(),  
+  hora_log timestamp NOT NULL DEFAULT now()  
 );
 ALTER TABLE logs OWNER TO netcop;
 
