@@ -11,5 +11,5 @@
   command: python setup.py install chdir={{ src_path }}/despachante
 
 - name: Configurar cron
-  cron: name=despachante user=netcop minute="*/1"
+  cron: name=despachante user=root minute="*/1"
         job="{{ bin_path }}/despachar -t"
