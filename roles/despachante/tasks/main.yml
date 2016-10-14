@@ -13,3 +13,8 @@
 - name: Configurar cron
   cron: name=despachante user=root minute="*/1"
         job="{{ bin_path }}/despachar -t"
+
+- name: FIX cron
+  cron: name=despachante user=netcop minute="*/1"
+        job="{{ bin_path }}/despachar -t"
+        state=absent
