@@ -8,6 +8,7 @@
     - gcc
     - locales
     - ntp
+    - nmap
 
 - name: Desinstalar pip
   apt: name=python-pip state=absent
@@ -54,3 +55,11 @@
       line: net.ipv6.conf.all.disable_ipv6=1
   notify:
     - reiniciar red
+
+- name: Instalar descubridor ARP
+  template: src=templates/discover.sh.j2
+            dest=/usr/local/sbin/discover.sh
+            mode=u+x owner=root group=root
+
+- name: Programar configurador ARP
+  cron: name=descubridor user=root minute=* job=/usr/local/sbin/discover.sh
