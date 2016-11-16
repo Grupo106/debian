@@ -203,6 +203,23 @@ CREATE OR REPLACE VIEW v_clase_puerto AS
 SELECT j.id_clase, p.numero, p.protocolo, j.grupo
 FROM puerto p INNER JOIN clase_puerto j USING (id_puerto);
 
+-- vista v_politica_clase_oyd
+-- ---------------------------------------------------------------
+-- Chequear si es clase origen y destino
+CREATE OR REPLACE VIEW v_politica_clase_oyd AS 
+ SELECT a.id_politica
+   FROM objetivo a
+     JOIN objetivo b ON a.id_politica = b.id_politica AND a.id_clase = b.id_clase AND a.id_objetivo <> b.id_objetivo AND a.tipo <> b.tipo AND a.direccion_fisica IS NULL AND b.direccion_fisica IS NULL AND NOT (a.id_politica IN ( SELECT objetivo.id_politica
+           FROM objetivo
+          GROUP BY objetivo.id_politica
+         HAVING count(objetivo.id_politica) <> 2))
+  GROUP BY a.id_politica
+ HAVING count(1) = 2;
+
+ALTER TABLE v_politica_clase_oyd
+  OWNER TO netcop;
+GRANT ALL ON TABLE v_politica_clase_oyd TO netcop;
+
 -- Limpieza
 -- ---------------------------------------------------------------------------
 --  Limpia clases de trafico de sistema mal creadas con id menores a mil
